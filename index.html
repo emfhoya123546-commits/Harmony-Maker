@@ -101,12 +101,16 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .spacer{height:1px;margin-top:-1px}
 .rollfoot{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--ink2)}
 .rollfoot kbd{font:500 11px var(--f-mono);background:var(--sunk);border-radius:4px;padding:1px 5px;color:var(--ink)}
-.chordgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0;padding:12px}
-.cbar{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--ink);padding:4px 8px 8px;min-width:0}
-.cbar .bn{font:500 11px var(--f-mono);color:var(--ink3)}
-.cbar input{font:500 16px var(--f-mono);border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:3px 0;width:100%;letter-spacing:.01em}
-.cbar input:focus{outline:none;border-bottom:2px solid var(--mel)}
-.cbar.bad input{color:var(--bad);border-bottom-color:var(--bad)}
+.chordgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px 0;padding:12px}
+.cbar{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--ink);padding:2px 10px 6px;min-width:0}
+.cbar .bn{font:600 11px var(--f-mono);color:var(--ink2)}
+.slots{display:grid;gap:6px;min-width:0}
+.slot{display:flex;flex-direction:column;min-width:0}
+.slot span{font:500 10px var(--f-mono);color:var(--ink3);letter-spacing:.04em}
+.slot input{font:500 15px var(--f-mono);border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:3px 0;width:100%;min-width:0}
+.slot input::placeholder{color:var(--ink3);opacity:.6}
+.slot input:focus{outline:none;border-bottom:2px solid var(--mel)}
+.slot.bad input{color:var(--bad);border-bottom-color:var(--bad)}
 .cbar.off .bn::after{content:" · 화음 끔";color:var(--ink3)}
 .chordhelp{font-size:12.5px;color:var(--ink2);display:flex;flex-wrap:wrap;gap:4px 16px}
 .chordhelp code{font:500 12px var(--f-mono);background:var(--sunk);padding:1px 5px;border-radius:4px;color:var(--ink)}
@@ -274,9 +278,8 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
       <div class="bar-h"><h3>코드표</h3><button class="btn ghost" id="add4">마디 4개 추가</button></div>
       <div class="chordgrid" id="chordgrid"></div>
       <details class="guide flat" id="g-chord"><summary>코드 적는 법</summary><div class="gbody"><div class="chordhelp">
-        <span>한 마디 두 코드 <code>C G</code></span>
-        <span>박 단위 <code>C / / G</code></span>
-        <span>빈칸이나 <code>%</code> · 앞 코드 유지</span>
+        <span>칸 하나가 한 박이에요. 코드가 바뀌는 박에만 적어요</span>
+        <span>빈칸 · 앞 코드 그대로</span>
         <span>예 <code>Am7</code> <code>Fmaj7</code> <code>G7sus4</code> <code>Bm7b5</code> <code>C/E</code> <code>Bbdim</code></span>
       </div></div></details>
     </div>
@@ -511,7 +514,7 @@ function detectChords(notes,mel){
     let cell='';
     if(W){
       cell=W.name;
-      if($('#splitBars').checked&&q>=2){
+      if($('#splitBars').checked&&nBeats()%2===0){
         const A=bestChord(hist(notes,a,a+q/2,mel),mel), B=bestChord(hist(notes,a+q/2,b,mel),mel);
         if(A&&B&&A.name!==B.name&&(A.s+B.s)>W.s*1.2) cell=A.name+' '+B.name;
       }
@@ -891,9 +894,9 @@ function draw(){
     if(S.harmOn[i]){ c.fillStyle=C['--on']; c.fillRect(x+1,0,w-1,STRIP); }
     c.fillStyle=S.harmOn[i]?C['--mel']:C['--ink3']; c.font='600 11px '+mono; c.fillText(String(i+1),x+6,STRIP/2+1);
     if(w>70){ c.font='500 11px '+body; c.fillText(S.harmOn[i]?'화음 켬':'화음 끔',x+26,STRIP/2+1); }
-    const tk=tokens(S.chords[i]); const valid=cellValid(S.chords[i]);
+    const tk=tokens(S.chords[i]);
     c.font='500 13px '+mono;
-    if(tk.length){ const sw=w/tk.length; tk.forEach((t,k)=>{ c.fillStyle=valid?(t==='/'||t==='%'?C['--ink3']:C['--ink']):C['--bad']; c.fillText(t,x+6+k*sw,STRIP+LANE/2+1); }); }
+    if(tk.length){ const sw=w/tk.length; tk.forEach((t,k)=>{ if(t==='/'||t==='%') return; c.fillStyle=parseOne(t)?C['--ink']:C['--bad']; c.fillText(t,x+6+k*sw,STRIP+LANE/2+1); }); }
     else if(RC[i]&&RC[i][0]){ c.fillStyle=C['--ink3']; c.fillText('%',x+6,STRIP+LANE/2+1); }
   }
   c.fillStyle=C['--line']; c.fillRect(0,STRIP,W,1); c.fillRect(0,TOP-1,W,1);
@@ -995,20 +998,57 @@ function syncControls(){
   $('#bpm').value=S.bpm; $('#bars').value=S.bars; $('#tonic').value=S.tonic; $('#mode').value=S.mode;
   const tsv=S.num+'/'+S.den; const sel=$('#ts'); if(![...sel.options].some(o=>o.value===tsv)){ const o=document.createElement('option'); o.value=o.textContent=tsv; sel.appendChild(o); } sel.value=tsv;
 }
-let gridBars=-1;
+let gridBars=-1, gridBeats=-1;
+const nBeats=()=>Math.max(1,Math.round(qpb()/beatLen()));
+function toSlots(str){
+  const n=nBeats(), tk=tokens(str).map(t=>t==='/'||t==='%'?'':t), out=Array(n).fill('');
+  if(!tk.length) return out;
+  if(tk.length===n) return tk;
+  if(n%tk.length===0){ const k=n/tk.length; tk.forEach((t,i)=>out[i*k]=t); return out; }
+  tk.slice(0,n).forEach((t,i)=>out[i]=t); return out;
+}
+function fromSlots(arr){
+  if(arr.every(x=>!x.trim())) return '';
+  const a=arr.map(x=>x.trim()||'/');
+  if(a.slice(1).every(x=>x==='/')) return a[0]==='/'?'':a[0];
+  if(a.length===4&&a[1]==='/'&&a[3]==='/') return a[0]+' '+a[2];
+  return a.join(' ');
+}
 function buildGrid(force){
-  const g=$('#chordgrid');
-  if(!force&&gridBars===S.bars){ [...g.children].forEach((el,i)=>{ const inp=el.querySelector('input'); if(document.activeElement!==inp) inp.value=S.chords[i]||''; el.classList.toggle('bad',!cellValid(S.chords[i])); el.classList.toggle('off',!S.harmOn[i]); }); return; }
-  g.innerHTML=''; gridBars=S.bars;
+  const g=$('#chordgrid'), n=nBeats();
+  if(!force&&gridBars===S.bars&&gridBeats===n){
+    [...g.children].forEach((el,i)=>{
+      const sl=toSlots(S.chords[i]);
+      el.querySelectorAll('.slot').forEach((sd,k)=>{ const inp=sd.querySelector('input'); if(document.activeElement!==inp) inp.value=sl[k]; sd.classList.toggle('bad',!!sl[k]&&!parseOne(sl[k])); });
+      el.classList.toggle('off',!S.harmOn[i]);
+    });
+    return;
+  }
+  g.innerHTML=''; gridBars=S.bars; gridBeats=n;
+  const lab=S.den===8&&S.num%3===0?(k=>(k+1)+'박'):(k=>String(k+1));
   for(let i=0;i<S.bars;i++){
-    const el=document.createElement('label'); el.className='cbar';
-    el.innerHTML=`<span class="bn">${i+1}</span><input type="text" id="ch-${i}" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="${i+1}마디 코드">`;
-    const inp=el.querySelector('input'); inp.value=S.chords[i]||'';
-    el.classList.toggle('bad',!cellValid(S.chords[i])); el.classList.toggle('off',!S.harmOn[i]);
-    inp.addEventListener('focus',()=>{ inp._snap=JSON.stringify(S.chords); });
-    inp.addEventListener('input',()=>{ S.chords[i]=inp.value; el.classList.toggle('bad',!cellValid(inp.value)); markReal(); computeHarm(); layout(); });
-    inp.addEventListener('change',()=>{ if(inp._snap&&inp._snap!==JSON.stringify(S.chords)){ const cur=S.chords.slice(); S.chords=JSON.parse(inp._snap); pushHistory(); S.chords=cur; } });
-    inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); const nx=document.getElementById('ch-'+(i+1)); if(nx) nx.focus(); else inp.blur(); } });
+    const el=document.createElement('div'); el.className='cbar';
+    el.innerHTML=`<span class="bn">${i+1}</span><div class="slots" style="grid-template-columns:repeat(${n},minmax(0,1fr))"></div>`;
+    el.classList.toggle('off',!S.harmOn[i]);
+    const box=el.querySelector('.slots'), sl=toSlots(S.chords[i]);
+    for(let k=0;k<n;k++){
+      const sd=document.createElement('label'); sd.className='slot';
+      sd.innerHTML=`<span>${lab(k)}</span><input type="text" id="ch-${i}-${k}" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="${k===0&&i>0?'%':'·'}" aria-label="${i+1}마디 ${k+1}박 코드">`;
+      const inp=sd.querySelector('input'); inp.value=sl[k];
+      sd.classList.toggle('bad',!!sl[k]&&!parseOne(sl[k]));
+      inp.addEventListener('focus',()=>{ inp._snap=JSON.stringify(S.chords); inp.select(); });
+      inp.addEventListener('input',()=>{
+        const cur=[...box.querySelectorAll('input')].map(x=>x.value.replace(/\s+/g,''));
+        S.chords[i]=fromSlots(cur);
+        sd.classList.toggle('bad',!!inp.value.trim()&&!parseOne(inp.value.trim()));
+        markReal(); computeHarm(); layout();
+      });
+      inp.addEventListener('change',()=>{ if(inp._snap&&inp._snap!==JSON.stringify(S.chords)){ const cur=S.chords.slice(); S.chords=JSON.parse(inp._snap); pushHistory(); S.chords=cur; } });
+      inp.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){ e.preventDefault(); const nx=document.getElementById(`ch-${i+1}-0`); if(nx) nx.focus(); else inp.blur(); }
+      });
+      box.appendChild(sd);
+    }
     g.appendChild(el);
   }
 }
