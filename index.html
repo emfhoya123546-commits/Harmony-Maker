@@ -10,7 +10,7 @@
   --paper:#F2F4F7; --panel:#FFFFFF; --sunk:#E9ECF1; --key:#EEF1F5;
   --ink:#151C28; --ink2:#4E596A; --ink3:#8992A0; --line:#D6DBE3; --grid:#E5E9EF;
   --mel:#2343D0; --mel-ink:#FFFFFF; --on:rgba(35,67,208,.10);
-  --h1:#0A8574; --h2:#B06400; --h3:#AF2277; --h4:#4E7A10; --h5:#6A3CD4; --h6:#5B6576; --h7:#0369A1; --h8:#9F1239; --h9:#C2410C; --h10:#78350F; --h11:#15803D;
+  --h1:#0A8574; --h2:#B06400; --h3:#AF2277; --h4:#4E7A10; --h5:#6A3CD4; --h6:#5B6576; --h7:#0369A1; --h8:#9F1239; --h9:#C2410C; --h10:#78350F; --h11:#15803D; --h12:#9333EA;
   --bad:#C0262D; --good:#0A8574;
   --f-disp:"Gowun Batang","Nanum Myeongjo",serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
@@ -21,13 +21,13 @@
   --paper:#0E1218; --panel:#151A22; --sunk:#1B212B; --key:#1A2029;
   --ink:#E5E9F0; --ink2:#A3ADBC; --ink3:#6D7787; --line:#2A3241; --grid:#1F2631;
   --mel:#7D96FF; --mel-ink:#0B1020; --on:rgba(125,150,255,.14);
-  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80;
+  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE;
   --bad:#FF6B6B; --good:#2CCDB6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#0E1218; --panel:#151A22; --sunk:#1B212B; --key:#1A2029;
   --ink:#E5E9F0; --ink2:#A3ADBC; --ink3:#6D7787; --line:#2A3241; --grid:#1F2631;
   --mel:#7D96FF; --mel-ink:#0B1020; --on:rgba(125,150,255,.14);
-  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80;
+  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE;
   --bad:#FF6B6B; --good:#2CCDB6; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -56,6 +56,15 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .btn.play{min-width:84px;justify-content:center}
 .layout{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:22px;padding-left:var(--gut-l);padding-right:var(--gut-r);padding-block:20px 48px;max-width:1480px;margin:0 auto;align-items:start}
 @media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:901px){
+  html,body{height:100%}
+  body{overflow:hidden}
+  .layout{height:calc(100% - var(--toph,64px));padding-block:0;align-items:stretch}
+  .steps,.work{overflow-y:auto;min-height:0;padding-block:16px 40px;overscroll-behavior:contain}
+  .steps{padding-right:10px;scrollbar-gutter:stable}
+  .work>.surface:first-child{position:sticky;top:0;z-index:5;box-shadow:0 6px 14px -10px rgba(0,0,0,.25)}
+  .work{padding-top:16px}
+}
 .steps{display:flex;flex-direction:column;gap:0;min-width:0}
 .step{padding-block:16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px;min-width:0}
 .step:first-child{border-top:0;padding-top:2px}
@@ -84,6 +93,21 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .type small{display:block;color:var(--ink2);font-size:12px;line-height:1.35}
 .type em{display:block;font-style:normal;color:var(--ink3);font-size:11.5px;line-height:1.4;margin-top:2px}
 .type em::before{content:"이럴 때 · ";color:var(--mel);font-weight:600}
+.rtable{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;font-size:12.5px;align-items:center}
+.rtable .vn{font-weight:600;display:flex;align-items:center;gap:6px}
+.rtable .vn i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.rtable .rg{font-family:var(--f-mono);color:var(--ink2);font-size:12px}
+.rtable .wn{font-size:12px;color:var(--ink3);text-align:right}
+.rtable .wn.bad{color:var(--bad);font-weight:600}
+.tfold{border-top:1px solid var(--line)}
+.tfold:first-child{border-top:0}
+.tfold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--ink2);user-select:none;border-radius:6px}
+.tfold>summary::-webkit-details-marker{display:none}
+.tfold>summary::before{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(-45deg);transition:transform .15s;flex:none}
+.tfold[open]>summary::before{transform:rotate(45deg)}
+.tfold>summary:hover{color:var(--ink);background:var(--sunk)}
+.tfold .cnt{margin-left:auto;font:500 11px var(--f-mono);color:var(--mel);letter-spacing:0}
+.tfold .tbody{display:flex;flex-direction:column;gap:2px;padding-bottom:6px}
 .tgrp{font-size:11.5px;font-weight:600;letter-spacing:.05em;color:var(--ink3);margin:8px 0 2px 8px}
 .tgrp:first-child{margin-top:0}
 .work{display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -145,7 +169,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
   <aside class="steps">
     <section class="step">
       <h2><span class="no">1</span>멜로디 가져오기</h2>
-      <div class="seg" role="tablist">
+      <div class="seg" role="tablist" id="importSeg">
         <button role="tab" aria-selected="true" data-tab="midi" id="tab-midi">멜로디 MIDI</button>
         <button role="tab" aria-selected="false" data-tab="voice" id="tab-voice">노래 녹음</button>
         <button role="tab" aria-selected="false" data-tab="draw" id="tab-draw">직접 그리기</button>
@@ -230,7 +254,17 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 
     <section class="step">
       <h2><span class="no">3</span>화음 고르기</h2>
+      <div class="seg" role="tablist" id="hmodeSeg">
+        <button role="tab" aria-selected="true" data-h="free">자유 선택</button>
+        <button role="tab" aria-selected="false" data-h="satb">SATB 합창</button>
+      </div>
       <div class="types" id="types"></div>
+      <div class="pane" id="satbBox" hidden>
+        <label class="fld"><span>멜로디 성부</span><select id="satbMel" style="flex:1;min-width:0"><option value="S">소프라노가 멜로디</option><option value="A">알토가 멜로디</option><option value="T">테너가 멜로디</option></select></label>
+        <label class="fld"><span>리듬</span><select id="satbRhythm" style="flex:1;min-width:0"><option value="follow">멜로디 리듬 따라가기 (가사 같이)</option><option value="pad">패드 코러스 (우-/아-, 코드 바뀔 때만)</option></select></label>
+        <div class="rtable" id="rtable"></div>
+        <p class="hint" id="satbHint">성부끼리 교차하지 않고, 평행 5도·8도를 피하고, 3음이 빠지지 않게, 앞 음에서 가장 적게 움직이도록 배치해요. 음역 밖 음은 피아노롤에 빨간 점선으로 표시돼요.</p>
+      </div>
       <label class="chk"><input type="checkbox" id="skipShort"> 16분음표보다 짧은 음은 화음 빼기</label>
       <p class="hint">피아노롤 맨 위 줄을 누르거나 끌면 마디별로 화음을 켜고 꺼요.</p>
       <div class="row">
@@ -308,15 +342,24 @@ const TYPES=[
   {id:'par4', grp:'넓고 빈 소리', label:'평행 4도 아래', color:'--h8', desc:'음계대로 4도 아래를 그대로 따라감', use:'비어 있고 몽환적인 소리. 인디·드림팝, 동양풍, 성가 같은 코러스.'},
   {id:'par5', grp:'넓고 빈 소리', label:'평행 5도 아래', color:'--h9', desc:'음계대로 5도 아래를 그대로 따라감', use:'단단하고 웅장한 울림. 록 코러스, 챈트, 힘 있는 떼창 느낌.'},
   {id:'gospel',grp:'스타일', label:'가스펠 스택', color:'--h10', desc:'멜로디 바로 아래에 코드톤 3개를 촘촘히', use:'두껍고 소울풀한 블록 화음. 가스펠, R&B 후렴, 크게 끝나는 엔딩. 코드에 7th를 적으면 더 가스펠다워져요.'},
+  {id:'pad',grp:'스타일', label:'패드 코러스', color:'--h12', desc:'코드 바뀔 때만 길게 깔리는 우-/아- 3성부', use:'멜로디 뒤 배경 코러스. 발라드 후렴, 뮤지컬 솔로 뒤 앙상블, 잔잔한 브릿지.'},
   {id:'contra',grp:'스타일', label:'역방향', color:'--h11', desc:'멜로디가 오르면 내려가고, 내려가면 올라감', use:'따로 노는 카운터 멜로디처럼 들림. 브릿지, 두 번째 후렴에 변화 줄 때, 아카펠라.'},
 ];
 const HT=[
   {id:'up',en:'Harmony Up'},{id:'down',en:'Harmony Down'},{id:'up2',en:'Harmony Top'},{id:'par3',en:'Parallel 3rd'},{id:'oct',en:'Octave Down'},
   {id:'up6',en:'Harmony Up 6th'},{id:'down6',en:'Harmony Low 6th'},{id:'par4',en:'Parallel 4th Below'},{id:'par5',en:'Parallel 5th Below'},
   {id:'gos1',parent:'gospel',en:'Gospel 1'},{id:'gos2',parent:'gospel',en:'Gospel 2'},{id:'gos3',parent:'gospel',en:'Gospel 3'},
+  {id:'pad1',parent:'pad',en:'Pad Chorus High'},{id:'pad2',parent:'pad',en:'Pad Chorus Mid'},{id:'pad3',parent:'pad',en:'Pad Chorus Low'},
   {id:'contra',en:'Contrary Motion'},
 ].map(t=>{ const T=TYPES.find(x=>x.id===(t.parent||t.id)); return {...t,label:T.label,color:T.color}; });
 const typeOn=t=>!!S.types[t.parent||t.id];
+const VO=['S','A','T','B'];
+const RANGE={S:[60,79],A:[55,74],T:[48,67],B:[40,62]};
+const VNAME={S:'소프라노',A:'알토',T:'테너',B:'베이스'};
+const VEN={S:'Soprano',A:'Alto',T:'Tenor',B:'Bass'};
+const VCOL={S:'--h3',A:'--h1',T:'--h2',B:'--h4'};
+const SATB_HT=VO.map(v=>({id:'satb'+v,v,label:VNAME[v],color:VCOL[v],en:VEN[v]}));
+function activeTracks(){ return S.hmode==='satb'?SATB_HT.filter(t=>S.harm[t.id]):HT.filter(t=>typeOn(t)&&S.harm[t.id]); }
 
 // ---------- state ----------
 const S={
@@ -333,7 +376,7 @@ const S={
     [67,28,3]
   ].map(([p,s,d])=>({p,s,d,v:96})),
   harmOn:[],types:{up:true},
-  skipShort:false,snap:.25,ppb:56,harm:{},playFrom:0
+  skipShort:false,hmode:'free',satb:{mel:'S',rhythm:'follow'},voiceOf:{},snap:.25,ppb:56,harm:{},playFrom:0
 };
 S.harmOn=Array(S.bars).fill(true);
 let ACC=null; let RC=[], SCL=null, MID=null, LA=null, LAST_AUDIO_NAME='';
@@ -404,11 +447,12 @@ function scaleStep(p,k){
 const has=(p,pcs)=>pcs.includes(((p%12)+12)%12);
 function toneAbove(p,pcs){ for(let q=p+3;q<=p+12;q++) if(has(q,pcs)) return q; return scaleStep(p,2); }
 function toneBelow(p,pcs){ for(let q=p-3;q>=p-12;q--) if(has(q,pcs)) return q; return scaleStep(p,-2); }
-function hUp(n){ const c=chordAt(n.s); if(!c) return scaleStep(n.p,2); return has(n.p,c.pcs)?toneAbove(n.p,c.pcs):scaleStep(n.p,2); }
+function isFirm(n){ const q=qpb(), pos=((n.s%q)+q)%q, half=(Math.round(q/beatLen())%2===0)?q/2:q; return n.d>=1-1e-6||Math.abs(pos/half-Math.round(pos/half))<1e-6; }
+function hUp(n){ const c=chordAt(n.s); if(!c) return scaleStep(n.p,2); return (has(n.p,c.pcs)||isFirm(n))?toneAbove(n.p,c.pcs):scaleStep(n.p,2); }
 const HF={
   up:hUp,
-  down:n=>{ const c=chordAt(n.s); if(!c) return scaleStep(n.p,-2); return has(n.p,c.pcs)?toneBelow(n.p,c.pcs):scaleStep(n.p,-2); },
-  up2:n=>{ const c=chordAt(n.s); const u=hUp(n); if(c&&has(n.p,c.pcs)&&has(u,c.pcs)) return toneAbove(u,c.pcs); return scaleStep(n.p,4); },
+  down:n=>{ const c=chordAt(n.s); if(!c) return scaleStep(n.p,-2); return (has(n.p,c.pcs)||isFirm(n))?toneBelow(n.p,c.pcs):scaleStep(n.p,-2); },
+  up2:n=>{ const c=chordAt(n.s); const u=hUp(n); if(c&&has(u,c.pcs)) return toneAbove(u,c.pcs); return scaleStep(n.p,4); },
   down6:n=>hUp(n)-12,
   par3:n=>scaleStep(n.p,2),
   oct:n=>n.p-12,
@@ -447,15 +491,126 @@ function contrary(notes){
   }
   return out;
 }
+// ---------- SATB voicing ----------
+function pseudoChord(p){ const r=scaleStep(p,-4), t=scaleStep(p,-2); const pcs=[r%12,t%12,p%12]; return {root:r%12,iv:[0,(t-r+12)%12,(p-r+12)%12],pcs,bass:null}; }
+function chordParts(c){
+  const iv=c.iv, at=k=>iv.find(i=>k.includes(i));
+  const third=at([3,4]), fifth=at([6,7,8]), sev=iv.length>3?at([9,10,11]):undefined, sus=at([2,5]);
+  return {root:c.root, third:third!=null?(c.root+third)%12:(sus!=null?(c.root+sus)%12:null), fifth:fifth!=null?(c.root+fifth)%12:null, sev:sev!=null?(c.root+sev)%12:null};
+}
+function solveVoicing(c,fixed,prev,voices,useFixedOrder){
+  const P=chordParts(c), bassPc=c.bass!=null?c.bass:c.root, pcs=c.bass!=null&&!c.pcs.includes(c.bass)?c.pcs.concat([c.bass]):c.pcs;
+  const lists=voices.map(v=>{ const [lo,hi]=RANGE[v]; const o=[]; for(let p=lo-2;p<=hi+2;p++) if(has(p,pcs)) o.push(p); return o; });
+  let best=null, bestS=1e9; const cur={};
+  if(fixed) cur[fixed.v]=fixed.p;
+  const evalC=()=>{
+    let sc=0; const ord=VO.filter(v=>cur[v]!=null&&(useFixedOrder||!fixed||v!==fixed.v));
+    for(let i=0;i<ord.length-1;i++){ const u=cur[ord[i]], l=cur[ord[i+1]]; if(u<l) return; if(u===l) sc+=4;
+      const lim=ord[i+1]==='B'?19:12; if(u-l>lim) sc+=(u-l-lim)*1.5; }
+    const set=new Set(VO.filter(v=>cur[v]!=null).map(v=>((cur[v]%12)+12)%12));
+    if(P.third!=null&&!set.has(P.third)) sc+=12;
+    if(!set.has(P.root)) sc+=6;
+    if(P.sev!=null&&!set.has(P.sev)) sc+=4;
+    if(P.fifth!=null&&!set.has(P.fifth)) sc+=1;
+    if(P.third!=null&&VO.filter(v=>cur[v]!=null&&((cur[v]%12)+12)%12===P.third).length>1) sc+=3;
+    for(const v of voices){ const p=cur[v], [lo,hi]=RANGE[v];
+      if(p<lo) sc+=(lo-p)*5; if(p>hi) sc+=(p-hi)*5;
+      if(v==='B'&&((p%12)+12)%12!==bassPc) sc+=6;
+      if(prev&&prev[v]!=null){ const d=Math.abs(p-prev[v]); sc+=d*.6; if(d>7) sc+=4; if(d>12) sc+=8; }
+      else sc+=Math.abs(p-(lo+hi)/2)*.15;
+    }
+    if(prev){ const all=VO.filter(v=>cur[v]!=null&&prev[v]!=null);
+      for(let i=0;i<all.length;i++) for(let j=i+1;j<all.length;j++){ const a=all[i],b=all[j];
+        const i0=(((prev[a]-prev[b])%12)+12)%12, i1=(((cur[a]-cur[b])%12)+12)%12;
+        if(i0===i1&&(i1===0||i1===7)&&cur[a]!==prev[a]&&Math.sign(cur[a]-prev[a])===Math.sign(cur[b]-prev[b])) sc+=10; } }
+    if(fixed) for(const v of voices) if(isClash(cur[v],fixed.p)) sc+=9;
+    for(let i=0;i<voices.length;i++) for(let j=i+1;j<voices.length;j++) if(isClash(cur[voices[i]],cur[voices[j]])&&!(has(cur[voices[i]],c.pcs)&&has(cur[voices[j]],c.pcs))) sc+=9;
+    if(sc<bestS){ bestS=sc; best={...cur}; }
+  };
+  const rec=k=>{ if(k===voices.length){ evalC(); return; } for(const p of lists[k]){ cur[voices[k]]=p; rec(k+1); } delete cur[voices[k]]; };
+  rec(0);
+  if(!best&&fixed&&useFixedOrder!==false) return solveVoicing(c,fixed,prev,voices,false);
+  return best;
+}
+function satbFollow(src,mv,free){
+  const out={}; free.forEach(v=>out[v]=[]); let prev=null, prevC=null;
+  for(const n of src){
+    const c=chordAt(n.s)||pseudoChord(n.p);
+    let best=null;
+    if(prev&&c===prevC&&!has(n.p,c.pcs)&&!isFirm(n)&&!free.some(v=>isClash(prev[v],n.p))){
+      const tryHold={...prev,[mv]:n.p}; const ord=VO.map(v=>tryHold[v]); let ok=true; for(let i=0;i<3;i++) if(ord[i]<ord[i+1]) ok=false;
+      if(ok) best=tryHold;
+    }
+    if(!best) best=solveVoicing(c,{v:mv,p:n.p},prev,free,true);
+    if(!best) continue;
+    free.forEach(v=>out[v].push({s:n.s,d:n.d,p:best[v],v:n.v||90}));
+    prev={...best,[mv]:n.p}; prevC=c;
+  }
+  return out;
+}
+function chordSpans(){
+  const q=qpb(), spans=[];
+  RC.forEach((sl,i)=>{ if(!S.harmOn[i]) return; const w=q/sl.length;
+    sl.forEach((c,j)=>{ if(!c) return; const s=i*q+j*w, last=spans[spans.length-1];
+      if(last&&last.c===c&&Math.abs(last.e-s)<1e-6) last.e=s+w; else spans.push({s,e:s+w,c}); }); });
+  return spans;
+}
+function padSolve(mv,free){
+  const out={}; free.forEach(v=>out[v]=[]); let prev=null;
+  for(const sp of chordSpans()){
+    const m=S.melody.find(n=>n.s<=sp.s+1e-6&&n.s+n.d>sp.s+1e-6)||S.melody.find(n=>n.s>=sp.s&&n.s<sp.e);
+    const best=solveVoicing(sp.c,m?{v:mv,p:m.p}:null,prev,free,true);
+    if(!best) continue;
+    free.forEach(v=>out[v].push({s:sp.s,d:sp.e-sp.s,p:best[v],v:72}));
+    prev={...best}; if(m) prev[mv]=m.p;
+  }
+  return out;
+}
+// ---------- clash check between lines ----------
+const isClash=(a,b)=>{ const d=(((a-b)%12)+12)%12; return d===1||d===11; };
+function overlapping(arr,n){ const e=n.s+n.d; return arr.filter(m=>m.s<e-1/16&&m.s+m.d>n.s+1/16); }
+function fixClashes(order){
+  const fixed=[];
+  const mel=S.melody;
+  for(const id of order){
+    const arr=S.harm[id]; if(!arr) continue;
+    for(const h of arr){
+      const c=chordAt(h.s), pcs=c?c.pcs:null, isCT=p=>pcs?has(p,pcs):inScale(p);
+      const ms=overlapping(mel,h), others=overlapping(fixed,h);
+      const bad=p=>ms.some(m=>isClash(p,m.p))||others.some(o=>isClash(p,o.p)&&!(isCT(p)&&isCT(o.p)));
+      if(!bad(h.p)) continue;
+      const m0=ms[0], above=m0?h.p>m0.p:null;
+      let best=null,bs=1e9;
+      for(let d=-4;d<=4;d++){ if(!d) continue; const p=h.p+d;
+        if(m0&&above!==null&&(above?p<=m0.p:p>=m0.p)) continue;
+        if(!inScale(p)&&!isCT(p)) continue;
+        if(bad(p)) continue;
+        let sc=Math.abs(d)+(isCT(p)?0:2)+(ms.some(m=>m.p===p)?3:0);
+        if(sc<bs){ bs=sc; best=p; } }
+      if(best!=null) h.p=best;
+    }
+    fixed.push(...arr);
+  }
+}
 function computeHarm(){
-  resolveChords(); S.harm={};
+  resolveChords(); S.harm={}; S.voiceOf={};
   const q=qpb();
   const src=S.melody.filter(n=>{ const bar=Math.floor(n.s/q+1e-6); return bar<S.bars&&S.harmOn[bar]&&!(S.skipShort&&n.d<.25-1e-6); });
+  if(S.hmode==='satb'){
+    const mv=S.satb.mel, free=VO.filter(v=>v!==mv);
+    const res=S.satb.rhythm==='pad'?padSolve(mv,free):satbFollow(src,mv,free);
+    free.forEach(v=>{ S.harm['satb'+v]=res[v]; S.voiceOf['satb'+v]=v; });
+    return;
+  }
+  let pads=null;
   for(const t of HT){
     if(!typeOn(t)) continue;
-    const out=t.id==='contra'?contrary(src):src.map(n=>({s:n.s,d:n.d,p:HF[t.id](n),v:n.v||90}));
+    let out;
+    if(t.parent==='pad'){ pads=pads||padSolve('S',['A','T','B']); const v={pad1:'A',pad2:'T',pad3:'B'}[t.id]; out=pads[v]; S.voiceOf[t.id]=v; }
+    else out=t.id==='contra'?contrary(src):src.map(n=>({s:n.s,d:n.d,p:HF[t.id](n),v:n.v||90}));
     S.harm[t.id]=out.filter(n=>n.p!=null&&n.p>=0&&n.p<=127);
   }
+  fixClashes(HT.filter(t=>S.harm[t.id]).map(t=>t.id));
 }
 
 // ---------- key & chord detection ----------
@@ -698,7 +853,7 @@ function schedule(ctx,dest,e,t,d){
 function buildEvents(mix){
   const ev=[], q=qpb(), bl=beatLen(), end=totalBeats();
   if(mix.mel) S.melody.forEach(n=>{ if(n.s<end) ev.push({s:n.s,d:n.d,k:'mel',p:n.p}); });
-  if(mix.harm) HT.forEach(t=>(S.harm[t.id]||[]).forEach(n=>ev.push({s:n.s,d:n.d,k:'harm',p:n.p})));
+  if(mix.harm) activeTracks().forEach(t=>(S.harm[t.id]||[]).forEach(n=>ev.push({s:n.s,d:n.d,k:'harm',p:n.p})));
   if(mix.chords) RC.forEach((sl,i)=>{ const w=q/sl.length; let j=0;
     while(j<sl.length){ const c=sl[j]; let k=j+1; while(k<sl.length&&sl[k]===c) k++; if(c) ev.push({s:i*q+j*w,d:(k-j)*w,k:'pad',c}); j=k; } });
   if(mix.metro) for(let b=0;b<end-1e-6;b+=bl) ev.push({s:b,d:0,k:'click',a:Math.abs(b/q-Math.round(b/q))<1e-6});
@@ -850,7 +1005,7 @@ const wrap=$('#rollwrap'), cv=$('#roll'), spacer=$('#spacer'), ctx2=cv.getContex
 const R={lo:55,hi:79,rowH:11,cw:600,h:400,sel:null,drag:null};
 let dpr=window.devicePixelRatio||1;
 function colors(){ const cs=getComputedStyle(document.documentElement); const g=k=>cs.getPropertyValue(k).trim();
-  const o={}; ['--bad','--panel','--key','--line','--grid','--ink','--ink2','--ink3','--mel','--on','--sunk','--h1','--h2','--h3','--h4','--h5','--h6','--h7','--h8','--h9','--h10','--h11'].forEach(k=>o[k]=g(k)); return o; }
+  const o={}; ['--bad','--panel','--key','--line','--grid','--ink','--ink2','--ink3','--mel','--on','--sunk','--h1','--h2','--h3','--h4','--h5','--h6','--h7','--h8','--h9','--h10','--h11','--h12'].forEach(k=>o[k]=g(k)); return o; }
 function rangeOf(){
   let lo=127,hi=0; const all=[S.melody,...Object.values(S.harm)];
   for(const a of all) for(const n of a){ lo=Math.min(lo,n.p); hi=Math.max(hi,n.p); }
@@ -904,9 +1059,10 @@ function draw(){
   const px=xOf(S.playFrom); c.fillStyle=C['--mel']; c.beginPath(); c.moveTo(px,TOP-1); c.lineTo(px+8,TOP-9); c.lineTo(px,TOP-9); c.closePath(); c.fill();
   // harmony
   c.globalAlpha=.78;
-  for(const t of HT){ const a=S.harm[t.id]; if(!a) continue; c.fillStyle=C[t.color]; for(const n of a) noteR(c,n,false,C); }
+  for(const t of activeTracks()){ const a=S.harm[t.id]; const rg=S.hmode==='satb'?RANGE[S.voiceOf[t.id]]:null; c.fillStyle=C[t.color]; for(const n of a) noteR(c,n,false,C,rg); }
   c.globalAlpha=1;
-  c.fillStyle=C['--mel']; for(const n of S.melody) noteR(c,n,n===R.sel,C);
+  const mrg=S.hmode==='satb'?RANGE[S.satb.mel]:null;
+  c.fillStyle=C['--mel']; for(const n of S.melody) noteR(c,n,n===R.sel,C,mrg);
   // playhead
   const ph=playheadBeat();
   if(ph!=null&&ph>=0){ const x=xOf(ph); c.fillStyle=C['--ink']; c.fillRect(Math.round(x),0,2,H); }
@@ -917,10 +1073,11 @@ function draw(){
   c.font='500 10.5px '+mono;
   for(let p=R.lo;p<=R.hi;p++){ if(p%12===0||p===R.lo){ c.fillStyle=p%12===0?C['--ink2']:C['--ink3']; c.fillText(NS[p%12]+(Math.floor(p/12)-1),8,yOf(p)+R.rowH/2); } }
 }
-function noteR(c,n,sel,C){
+function noteR(c,n,sel,C,rg){
   const x=xOf(n.s), w=Math.max(3,n.d*S.ppb-1.5), y=yOf(n.p)+1, h=R.rowH-2;
   if(x+w<GUT||x>R.cw||n.p<R.lo||n.p>R.hi) return;
   rr(c,x,y,w,h,2.5);
+  if(rg&&(n.p<rg[0]||n.p>rg[1])){ const f=c.fillStyle, a=c.globalAlpha; c.globalAlpha=1; c.strokeStyle=C['--bad']; c.lineWidth=1.5; c.setLineDash([3,2]); c.strokeRect(x-1.5,y-1.5,w+3,h+3); c.setLineDash([]); c.fillStyle=f; c.globalAlpha=a; }
   if(sel){ const f=c.fillStyle; c.strokeStyle=C['--ink']; c.lineWidth=2; c.strokeRect(x-1,y-1,w+2,h+2); c.fillStyle=f; }
 }
 function hit(x,y){
@@ -1053,20 +1210,41 @@ function buildGrid(force){
   }
 }
 function buildTypes(){
-  const box=$('#types'); box.innerHTML=''; let g='';
-  TYPES.forEach(t=>{
-    if(t.grp!==g){ g=t.grp; const h=document.createElement('div'); h.className='tgrp'; h.textContent=g; box.appendChild(h); }
-    const l=document.createElement('label'); l.className='type';
-    l.innerHTML=`<input type="checkbox" id="ht-${t.id}"><span class="dot" style="background:var(${t.color})"></span><span><b>${t.label}</b><small>${t.desc}</small><em>${t.use}</em></span>`;
-    const c=l.querySelector('input'); c.checked=!!S.types[t.id];
-    c.addEventListener('change',()=>{ S.types[t.id]=c.checked; afterChange(true); });
-    box.appendChild(l);
+  const box=$('#types'); box.innerHTML='';
+  const groups=[...new Set(TYPES.map(t=>t.grp))];
+  groups.forEach((g,gi)=>{
+    const d=document.createElement('details'); d.className='tfold'; d.id='tg-'+gi;
+    let open=gi===0; try{ const v=localStorage.getItem('tfold:'+gi); if(v!==null) open=v==='1'; }catch(e){}
+    d.open=open;
+    d.innerHTML=`<summary>${g}<span class="cnt"></span></summary><div class="tbody"></div>`;
+    const body=d.querySelector('.tbody'), cnt=d.querySelector('.cnt');
+    const upd=()=>{ const n=TYPES.filter(t=>t.grp===g&&S.types[t.id]).length; cnt.textContent=n?`${n}개 켬`:''; };
+    TYPES.filter(t=>t.grp===g).forEach(t=>{
+      const l=document.createElement('label'); l.className='type';
+      l.innerHTML=`<input type="checkbox" id="ht-${t.id}"><span class="dot" style="background:var(${t.color})"></span><span><b>${t.label}</b><small>${t.desc}</small><em>${t.use}</em></span>`;
+      const c=l.querySelector('input'); c.checked=!!S.types[t.id];
+      c.addEventListener('change',()=>{ S.types[t.id]=c.checked; upd(); afterChange(true); });
+      body.appendChild(l);
+    });
+    upd();
+    d.addEventListener('toggle',()=>{ try{ localStorage.setItem('tfold:'+gi,d.open?'1':'0'); }catch(e){} });
+    box.appendChild(d);
   });
 }
 function buildLegend(){
   const L=$('#legend'); L.innerHTML='<span><i style="background:var(--mel)"></i>원 멜로디</span>';
-  TYPES.forEach(t=>{ if(S.types[t.id]){ const s=document.createElement('span'); s.innerHTML=`<i style="background:var(${t.color})"></i>${t.label}`; L.appendChild(s); } });
+  if(S.hmode==='satb'){ L.firstChild.lastChild.textContent=`원 멜로디 (${VNAME[S.satb.mel]})`; SATB_HT.forEach(t=>{ if(S.harm[t.id]){ const s=document.createElement('span'); s.innerHTML=`<i style="background:var(${t.color})"></i>${t.label}`; L.appendChild(s); } }); buildRangeTable(); }
+  else TYPES.forEach(t=>{ if(S.types[t.id]){ const s=document.createElement('span'); s.innerHTML=`<i style="background:var(${t.color})"></i>${t.label}`; L.appendChild(s); } });
   const k=document.createElement('span'); k.style.marginLeft='auto'; k.textContent=`${TONIC_LABEL[S.tonic]} ${S.mode==='major'?'장조':'단조'} · ${S.num}/${S.den} · ${S.bpm} BPM`; L.appendChild(k);
+}
+const nm=p=>NS[p%12]+(Math.floor(p/12)-1);
+function buildRangeTable(){
+  const T=$('#rtable'); T.innerHTML='';
+  VO.forEach(v=>{
+    const isMel=v===S.satb.mel, arr=isMel?S.melody.filter(n=>n.s<totalBeats()):(S.harm['satb'+v]||[]), [lo,hi]=RANGE[v];
+    const bad=arr.filter(n=>n.p<lo||n.p>hi).length;
+    T.insertAdjacentHTML('beforeend',`<span class="vn"><i style="background:var(${isMel?'--mel':VCOL[v]})"></i>${VNAME[v]}${isMel?' · 멜로디':''}</span><span class="rg">${nm(lo)}–${nm(hi)}</span><span class="wn ${bad?'bad':''}">${bad?`음역 밖 ${bad}음`:'괜찮음'}</span>`);
+  });
 }
 function afterChange(relayout){ computeHarm(); buildGrid(false); buildLegend(); if(relayout) layout(); else draw(); }
 function refreshAll(forceGrid){ syncControls(); computeHarm(); buildGrid(!!forceGrid); buildTypes(); buildLegend(); layout(); }
@@ -1075,10 +1253,21 @@ function refreshAll(forceGrid){ syncControls(); computeHarm(); buildGrid(!!force
 TONIC_LABEL.forEach((n,i)=>{ const o=document.createElement('option'); o.value=i; o.textContent=n; $('#tonic').appendChild(o); });
 
 // tabs
-document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));
+document.querySelectorAll('#importSeg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('#importSeg button').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));
   document.querySelectorAll('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==b.dataset.tab);
 }));
+
+// harmony mode
+function setHMode(m){
+  S.hmode=m;
+  document.querySelectorAll('#hmodeSeg button').forEach(x=>x.setAttribute('aria-selected',x.dataset.h===m?'true':'false'));
+  $('#types').hidden=m==='satb'; $('#satbBox').hidden=m!=='satb';
+  afterChange(true);
+}
+document.querySelectorAll('#hmodeSeg button').forEach(b=>b.addEventListener('click',()=>setHMode(b.dataset.h)));
+$('#satbMel').addEventListener('change',e=>{ S.satb.mel=e.target.value; afterChange(true); });
+$('#satbRhythm').addEventListener('change',e=>{ S.satb.rhythm=e.target.value; afterChange(true); });
 
 // transport
 $('#playBtn').addEventListener('click',()=>{ PLAY?stopPlay():startPlay(); });
@@ -1194,9 +1383,9 @@ $('#guideBtn').addEventListener('click',async()=>{
 $('#exportBtn').addEventListener('click',async()=>{
   computeHarm();
   const CHS=[1,2,3,4,5,6,7,8,11,12,13,14,15];
-  const harmTracks=HT.filter(t=>typeOn(t)&&S.harm[t.id]&&S.harm[t.id].length).map((t,i)=>({name:t.en,ch:CHS[i%CHS.length],prog:52,notes:S.harm[t.id],id:t.id}));
+  const harmTracks=activeTracks().filter(t=>S.harm[t.id].length).map((t,i)=>({name:t.en,ch:CHS[i%CHS.length],prog:52,notes:S.harm[t.id],id:t.id}));
   if(!harmTracks.length){ toast('만들어진 화음이 없어요. ③에서 화음을 고르고 마디를 켜 주세요'); return; }
-  const mel=$('#exMel').checked?[{name:'Melody',ch:0,prog:0,notes:S.melody.filter(n=>n.s<totalBeats())}]:[];
+  const mel=$('#exMel').checked?[{name:S.hmode==='satb'?`Melody (${VEN[S.satb.mel]})`:'Melody',ch:0,prog:0,notes:S.melody.filter(n=>n.s<totalBeats())}]:[];
   const chordTr=[];
   if($('#exChords').checked){ const ns=[]; const q=qpb(); RC.forEach((sl,i)=>{ const w=q/sl.length; let j=0; while(j<sl.length){ const c=sl[j]; let k=j+1; while(k<sl.length&&sl[k]===c) k++; if(c) padNotes(c).forEach(p=>ns.push({s:i*q+j*w,d:(k-j)*w,p,v:70})); j=k; } }); chordTr.push({name:'Chords',ch:9+1,prog:0,notes:ns}); }
   const files=[{name:'harmony_all.mid',data:writeMidi([...mel,...harmTracks,...chordTr])}];
@@ -1214,6 +1403,8 @@ document.querySelectorAll('details.guide').forEach(d=>{
   try{ const v=localStorage.getItem('guide:'+d.id); if(v!==null) d.open=v==='1'; }catch(e){}
   d.addEventListener('toggle',()=>{ try{ localStorage.setItem('guide:'+d.id,d.open?'1':'0'); }catch(e){} if(d.id==='g-roll') layout(); });
 });
+(function(){ const top=document.querySelector('.top'); const set=()=>document.documentElement.style.setProperty('--toph',top.offsetHeight+'px'); set();
+  try{ new ResizeObserver(()=>{ set(); layout(); }).observe(top); }catch(e){ window.addEventListener('resize',set); } })();
 refreshAll(true);
 })();
 </script>
