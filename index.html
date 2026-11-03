@@ -62,7 +62,6 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
   .layout{height:calc(100% - var(--toph,64px));padding-block:0;align-items:stretch}
   .steps,.work{overflow-y:auto;min-height:0;padding-block:16px 40px;overscroll-behavior:contain}
   .steps{padding-right:10px;scrollbar-gutter:stable}
-  .work>.surface:first-child{position:sticky;top:0;z-index:5;box-shadow:0 6px 14px -10px rgba(0,0,0,.25)}
   .work{padding-top:16px}
 }
 .steps{display:flex;flex-direction:column;gap:0;min-width:0}
@@ -99,6 +98,9 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .rtable .rg{font-family:var(--f-mono);color:var(--ink2);font-size:12px}
 .rtable .wn{font-size:12px;color:var(--ink3);text-align:right}
 .rtable .wn.bad{color:var(--bad);font-weight:600}
+.viewbar{display:flex;align-items:center;gap:10px}
+.vlabel{font-size:12.5px;color:var(--ink2);letter-spacing:.04em}
+.viewbar .seg{flex:0 1 360px}
 .tfold{border-top:1px solid var(--line)}
 .tfold:first-child{border-top:0}
 .tfold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--ink2);user-select:none;border-radius:6px}
@@ -284,7 +286,15 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
   </aside>
 
   <section class="work">
-    <div class="surface">
+    <div class="viewbar">
+      <span class="vlabel">보기</span>
+      <div class="seg" role="tablist" id="viewSeg">
+        <button role="tab" aria-selected="true" data-v="both">같이 보기</button>
+        <button role="tab" aria-selected="false" data-v="roll">피아노롤만</button>
+        <button role="tab" aria-selected="false" data-v="chords">코드표만</button>
+      </div>
+    </div>
+    <div class="surface" id="rollSurface">
       <div class="bar-h">
         <h3>피아노롤</h3>
         <div class="listen">듣기
@@ -308,7 +318,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
       </div></div></details>
     </div>
 
-    <div class="surface">
+    <div class="surface" id="chordSurface">
       <div class="bar-h"><h3>코드표</h3><button class="btn ghost" id="add4">마디 4개 추가</button></div>
       <div class="chordgrid" id="chordgrid"></div>
       <details class="guide flat" id="g-chord"><summary>코드 적는 법</summary><div class="gbody"><div class="chordhelp">
@@ -1202,7 +1212,9 @@ function buildGrid(force){
       });
       inp.addEventListener('change',()=>{ if(inp._snap&&inp._snap!==JSON.stringify(S.chords)){ const cur=S.chords.slice(); S.chords=JSON.parse(inp._snap); pushHistory(); S.chords=cur; } });
       inp.addEventListener('keydown',e=>{
-        if(e.key==='Enter'){ e.preventDefault(); const nx=document.getElementById(`ch-${i+1}-0`); if(nx) nx.focus(); else inp.blur(); }
+        if(e.key==='Enter'){ e.preventDefault(); let nx=document.getElementById(`ch-${i+1}-0`);
+          if(!nx&&i===S.bars-1&&S.bars<400){ pushHistory(); setBars(S.bars+1); refreshAll(true); nx=document.getElementById(`ch-${i+1}-0`); if(nx) nx.scrollIntoView({block:'nearest'}); }
+          if(nx) nx.focus(); else inp.blur(); }
       });
       box.appendChild(sd);
     }
@@ -1257,6 +1269,15 @@ document.querySelectorAll('#importSeg button').forEach(b=>b.addEventListener('cl
   document.querySelectorAll('#importSeg button').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));
   document.querySelectorAll('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==b.dataset.tab);
 }));
+
+// view mode
+function setView(v){
+  document.querySelectorAll('#viewSeg button').forEach(x=>x.setAttribute('aria-selected',x.dataset.v===v?'true':'false'));
+  $('#rollSurface').hidden=v==='chords'; $('#chordSurface').hidden=v==='roll';
+  try{ localStorage.setItem('view',v); }catch(e){}
+  if(v!=='chords') layout();
+}
+document.querySelectorAll('#viewSeg button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.v)));
 
 // harmony mode
 function setHMode(m){
@@ -1406,6 +1427,7 @@ document.querySelectorAll('details.guide').forEach(d=>{
 (function(){ const top=document.querySelector('.top'); const set=()=>document.documentElement.style.setProperty('--toph',top.offsetHeight+'px'); set();
   try{ new ResizeObserver(()=>{ set(); layout(); }).observe(top); }catch(e){ window.addEventListener('resize',set); } })();
 refreshAll(true);
+try{ const v=localStorage.getItem('view'); if(v==='roll'||v==='chords') setView(v); }catch(e){}
 })();
 </script>
 
