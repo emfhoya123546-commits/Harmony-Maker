@@ -30,6 +30,7 @@
   --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80;
   --bad:#FF6B6B; --good:#2CCDB6; color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--paper);color:var(--ink);font:14.5px/1.55 var(--f-body);margin:0}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
 button,input,select{font:inherit;color:inherit}
@@ -141,66 +142,80 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
     <section class="step">
       <h2><span class="no">1</span>멜로디 가져오기</h2>
       <div class="seg" role="tablist">
-        <button role="tab" aria-selected="true" data-tab="midi" id="tab-midi">MIDI 파일</button>
+        <button role="tab" aria-selected="true" data-tab="midi" id="tab-midi">멜로디 MIDI</button>
         <button role="tab" aria-selected="false" data-tab="voice" id="tab-voice">노래 녹음</button>
         <button role="tab" aria-selected="false" data-tab="draw" id="tab-draw">직접 그리기</button>
       </div>
 
       <div class="pane" data-pane="midi">
-        <label class="file">멜로디가 들어 있는 MIDI 파일 (.mid)
+        <label class="file">멜로디 MIDI 올리기 (.mid)
           <input type="file" id="midiFile" accept=".mid,.midi,audio/midi,audio/x-midi">
         </label>
         <label class="fld" id="trackRow" hidden><span>멜로디 트랙</span><select id="trackSel" style="flex:1;min-width:0"></select></label>
-        <label class="chk"><input type="checkbox" id="autoChords" checked> 불러올 때 코드도 자동 인식</label>
-        <details class="guide" id="g-midi"><summary>어떻게 인식하나요</summary><div class="gbody"><p class="hint">트랙이 여러 개면 가장 위에서 혼자 노래하는 트랙을 멜로디로 고르고, 나머지 트랙으로 코드를 찾아요. 멜로디만 있으면 멜로디로 코드를 추측해요.</p></div></details>
+        <details class="guide" id="g-midi"><summary>설정</summary><div class="gbody">
+          <label class="chk"><input type="checkbox" id="autoChords" checked> 불러올 때 코드도 자동 인식</label>
+          <p class="hint">트랙이 여러 개면 가장 위에서 혼자 노래하는 트랙을 멜로디로 고르고, 나머지 트랙으로 코드를 찾아요. 멜로디만 있으면 멜로디로 코드를 추측해요.</p>
+        </div></details>
       </div>
 
       <div class="pane" data-pane="voice" hidden>
-        <details class="guide" id="g-rec"><summary>녹음하는 법</summary><div class="gbody">
-        <ol class="ol">
-          <li>아래 ②에 코드를 마디마다 적고 BPM을 맞춰요.</li>
-          <li>가이드 트랙을 저장하거나, 위의 ▶ 재생을 카운트인 켜고 틀어요.</li>
-          <li>헤드폰으로 들으면서 멜로디만 녹음해요. 스피커 소리가 섞이면 인식이 틀어져요.</li>
-          <li>녹음 파일(wav, mp3, m4a)을 올려요.</li>
-        </ol></div></details>
-        <div class="row">
-          <label class="fld"><span>카운트인</span><select id="guideCI"><option value="1">1마디</option><option value="2">2마디</option></select></label>
-          <label class="chk"><input type="checkbox" id="guidePad" checked> 코드 반주</label>
-          <label class="chk"><input type="checkbox" id="guideMel"> 멜로디</label>
-        </div>
-        <button class="btn" id="guideBtn">가이드 트랙 저장 (WAV)</button>
-        <label class="file">녹음 파일 올리기
+        <label class="file">녹음 파일 올리기 (wav, mp3, m4a)
           <input type="file" id="audioFile" accept="audio/*,.wav,.mp3,.m4a,.aac,.ogg,.flac">
         </label>
-        <p class="sub">녹음 시작점 맞추기</p>
-        <label class="chk"><input type="radio" name="align" value="guide" checked> 가이드와 같이 녹음 시작 (카운트인 뒤가 1마디)</label>
-        <label class="chk"><input type="radio" name="align" value="first"> 첫 음 위치 지정:
-          <input id="firstBar" type="number" min="1" value="1" style="width:52px" aria-label="첫 음 마디">마디
-          <input id="firstBeat" type="number" min="1" step="0.5" value="1" style="width:52px" aria-label="첫 음 박">박</label>
-        <div class="row">
-          <label class="fld"><span>지연 보정 ms</span><input id="latency" type="number" value="0" step="10" style="width:70px"></label>
-          <label class="fld"><span>옥타브</span><select id="octShift"><option value="0">그대로</option><option value="12">한 옥타브 올림</option><option value="-12">한 옥타브 내림</option></select></label>
-        </div>
-        <label class="chk"><input type="checkbox" id="snapKey" checked> 음계 밖으로 나간 음은 키 음계에 맞추기</label>
-        <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+        <div class="prog" id="progWrap" aria-hidden="true" hidden><i id="progBar"></i></div>
         <div class="status" id="voiceStatus" aria-live="polite"></div>
-        <button class="btn" id="reapplyBtn" disabled>설정 바꿔서 다시 변환</button>
+        <details class="guide" id="g-rec"><summary>녹음하는 법 · 가이드 트랙</summary><div class="gbody">
+          <ol class="ol">
+            <li>아래 ②에 코드를 마디마다 적고 BPM을 맞춰요.</li>
+            <li>가이드 트랙을 저장하거나, 위의 ▶ 재생을 카운트인 켜고 틀어요.</li>
+            <li>헤드폰으로 들으면서 멜로디만 녹음해요. 스피커 소리가 섞이면 인식이 틀어져요.</li>
+            <li>녹음 파일을 위에 올려요.</li>
+          </ol>
+          <div class="row">
+            <label class="fld"><span>카운트인</span><select id="guideCI"><option value="1">1마디</option><option value="2">2마디</option></select></label>
+            <label class="chk"><input type="checkbox" id="guidePad" checked> 코드 반주</label>
+            <label class="chk"><input type="checkbox" id="guideMel"> 멜로디</label>
+          </div>
+          <button class="btn" id="guideBtn">가이드 트랙 저장 (WAV)</button>
+        </div></details>
+        <details class="guide" id="g-recset"><summary>인식 설정</summary><div class="gbody">
+          <p class="sub">녹음 시작점</p>
+          <label class="chk"><input type="radio" name="align" value="guide" checked> 가이드와 같이 녹음 시작 (카운트인 뒤가 1마디)</label>
+          <label class="chk"><input type="radio" name="align" value="first"> 첫 음 위치:
+            <input id="firstBar" type="number" min="1" value="1" style="width:52px" aria-label="첫 음 마디">마디
+            <input id="firstBeat" type="number" min="1" step="0.5" value="1" style="width:52px" aria-label="첫 음 박">박</label>
+          <div class="row">
+            <label class="fld"><span>지연 보정 ms</span><input id="latency" type="number" value="0" step="10" style="width:70px"></label>
+            <label class="fld"><span>옥타브</span><select id="octShift"><option value="0">그대로</option><option value="12">한 옥타브 올림</option><option value="-12">한 옥타브 내림</option></select></label>
+          </div>
+          <label class="chk"><input type="checkbox" id="snapKey" checked> 음계 밖 음은 키에 맞추기</label>
+          <button class="btn" id="reapplyBtn" disabled>이 설정으로 다시 변환</button>
+        </div></details>
       </div>
 
       <div class="pane" data-pane="draw" hidden>
-        <details class="guide" id="g-draw"><summary>그리는 법</summary><div class="gbody"><p class="hint">오른쪽 피아노롤 빈 곳을 누르면 음이 생겨요. 드래그로 옮기고, 음 오른쪽 끝을 끌면 길이가 바뀌어요. 칸 크기는 롤 위의 <b>스냅</b>에서 골라요.</p></div></details>
-        <div class="row">
-          <button class="btn" id="clearMel">멜로디 지우기</button>
-          <button class="btn" id="newSong">빈 곡으로 시작</button>
-        </div>
+        <ol class="ol">
+          <li>오른쪽 피아노롤 빈 곳을 누르면 음이 생겨요. 누른 채로 끌면 길이가 정해져요.</li>
+          <li>음을 끌면 위아래로 음 높이, 좌우로 위치가 바뀌어요.</li>
+          <li>음 오른쪽 끝을 끌면 길이가 바뀌어요.</li>
+          <li>더블클릭하거나 선택하고 <b>Del</b>을 누르면 지워져요.</li>
+          <li>칸 크기는 롤 위의 <b>스냅</b>에서 골라요.</li>
+        </ol>
       </div>
     </section>
 
     <section class="step">
       <h2><span class="no">2</span>코드</h2>
-      <p class="hint">오른쪽 코드표에 마디마다 직접 적거나, 자동으로 찾은 뒤 고쳐 써요.</p>
+      <p class="hint">오른쪽 코드표에 마디마다 직접 적거나, 반주 MIDI를 올려서 자동으로 찾은 뒤 고쳐 써요.</p>
+      <label class="file" id="accDrop">반주 MIDI 올리기 (.mid) · 코드 인식용
+        <input type="file" id="accFile" accept=".mid,.midi,audio/midi,audio/x-midi">
+      </label>
+      <div class="row" id="accRow" hidden>
+        <span class="status" id="accName" style="flex:1;min-width:0"></span>
+        <button class="btn ghost" id="accClear">반주 빼기</button>
+      </div>
       <div class="row">
-        <label class="fld"><span>기준</span><select id="chordSrc"><option value="auto">반주 트랙 있으면 반주로</option><option value="mel">멜로디로만</option></select></label>
+        <label class="fld"><span>기준</span><select id="chordSrc"><option value="auto">반주 MIDI로 (없으면 멜로디로)</option><option value="mel">멜로디만 보고 추측</option></select></label>
       </div>
       <label class="chk"><input type="checkbox" id="splitBars" checked> 마디 안에서 코드가 바뀌면 2개로 나누기</label>
       <div class="row">
@@ -240,9 +255,11 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
           <label class="pill"><input type="checkbox" id="mixChord" checked>코드</label>
           <label class="pill"><input type="checkbox" id="mixMetro" checked>메트로놈</label>
         </div>
-        <label class="fld"><span>스냅</span><select id="snap"><option value="1">4분</option><option value="0.5">8분</option><option value="0.25" selected>16분</option><option value="0.3333333333">8분 셋잇단</option></select></label>
+        <label class="fld"><span>스냅</span><select id="snap"><option value="1">4분</option><option value="0.5">8분</option><option value="0.25" selected>16분</option><option value="0.125">32분</option><option value="0.3333333333333333">8분 셋잇단</option><option value="0.16666666666666666">16분 셋잇단</option></select></label>
         <label class="fld"><span>확대</span><input type="range" class="range" id="zoom" min="20" max="140" value="56"></label>
         <button class="btn ghost" id="delNote" disabled>선택 음 삭제</button>
+        <button class="btn ghost" id="clearMel">멜로디 지우기</button>
+        <button class="btn ghost" id="newSong">빈 곡</button>
       </div>
       <div class="legend" id="legend"></div>
       <div class="rollwrap" id="rollwrap"><canvas id="roll"></canvas><div class="spacer" id="spacer"></div></div>
@@ -316,7 +333,7 @@ const S={
   skipShort:false,snap:.25,ppb:56,harm:{},playFrom:0
 };
 S.harmOn=Array(S.bars).fill(true);
-let RC=[], SCL=null, MID=null, LA=null, LAST_AUDIO_NAME='';
+let ACC=null; let RC=[], SCL=null, MID=null, LA=null, LAST_AUDIO_NAME='';
 const qpb=()=>S.num*4/S.den;
 const beatLen=()=>(S.den===8&&S.num%3===0)?1.5:4/S.den;
 const totalBeats=()=>S.bars*qpb();
@@ -737,9 +754,9 @@ async function renderGuide(){
 const median=a=>{ const s=[...a].sort((x,y)=>x-y); return s.length?s[s.length>>1]:NaN; };
 async function analyzeAudio(file){
   const st=$('#voiceStatus'), pb=$('#progBar');
-  st.textContent='파일을 읽는 중이에요…'; pb.style.width='0';
+  st.textContent='파일을 읽는 중이에요…'; pb.style.width='0'; $('#progWrap').hidden=false;
   const ab=await file.arrayBuffer();
-  let buf; try{ buf=await ac().decodeAudioData(ab); }catch(e){ st.textContent='이 오디오 형식은 열 수 없어요. wav나 mp3로 바꿔서 올려 주세요.'; return; }
+  let buf; try{ buf=await ac().decodeAudioData(ab); }catch(e){ $('#progWrap').hidden=true; st.textContent='이 오디오 형식은 열 수 없어요. wav나 mp3로 바꿔서 올려 주세요.'; return; }
   const SR=11025, n=Math.ceil(buf.duration*SR);
   const oc=new OfflineAudioContext(1,n,SR), src=oc.createBufferSource(); src.buffer=buf; src.connect(oc.destination); src.start();
   const x=(await oc.startRendering()).getChannelData(0);
@@ -760,7 +777,7 @@ async function analyzeAudio(file){
     let bt=tau; if(tau>TMIN&&tau<TMAX){ const a=d[tau-1],b=d[tau],c=d[tau+1],den=a-2*b+c; if(den) bt=tau+.5*(a-c)/den; }
     f0[f]=SR/bt;
   }
-  pb.style.width='100%';
+  pb.style.width='100%'; setTimeout(()=>{$('#progWrap').hidden=true;},600);
   LA={f0,rms,hop:H/SR,win:W/SR}; LAST_AUDIO_NAME=file.name;
   $('#reapplyBtn').disabled=false;
   segmentAudio();
@@ -814,8 +831,9 @@ function segmentAudio(){
   const end=Math.max(...S.melody.map(nt=>nt.s+nt.d));
   if(end>totalBeats()) setBars(Math.ceil(end/q));
   markReal();
-  st.textContent=`${LAST_AUDIO_NAME}에서 음 ${S.melody.length}개를 찾았어요. 롤에서 틀린 음을 고쳐 주세요.`;
-  refreshAll();
+  st.textContent=`${LAST_AUDIO_NAME}에서 음 ${S.melody.length}개를 찾았어요. 피아노롤에서 틀린 음을 고쳐 주세요.`;
+  wrap.scrollLeft=0; refreshAll();
+  try{ wrap.closest('.surface').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}); }catch(e){}
 }
 
 // ---------- history ----------
@@ -1073,28 +1091,53 @@ async function loadMidi(file){
   applyMidi(bi,true);
   toast(`${file.name} 불러왔어요`);
 }
+function accNotes(){
+  if(ACC) return ACC.notes;
+  if(!MID) return [];
+  const sel=+$('#trackSel').value;
+  return MID.groups.filter((x,i)=>i!==sel&&!x.drum).flatMap(x=>x.notes);
+}
+function runDetect(quiet){
+  const acc=accNotes(), useAcc=acc.length&&$('#chordSrc').value==='auto';
+  if(!useAcc&&!S.melody.length){ if(!quiet) toast('멜로디나 반주 MIDI가 있어야 코드를 찾을 수 있어요'); return; }
+  pushHistory(); S.chords=detectChords(useAcc?acc:S.melody,!useAcc); markReal(); afterChange(true);
+  toast(useAcc?(ACC?'반주 MIDI로 코드를 찾았어요':'MIDI의 반주 트랙으로 코드를 찾았어요'):'멜로디로 코드를 추측했어요. 틀린 곳은 고쳐 주세요');
+}
+async function loadAcc(file){
+  let m; try{ m=parseMidi(await file.arrayBuffer()); }catch(err){ toast(err.message||'반주 MIDI를 읽지 못했어요'); return; }
+  const notes=[];
+  m.tracks.forEach(tr=>tr.notes.forEach(n=>{ if(n.ch!==9) notes.push({s:n.t/m.div,d:n.d/m.div,p:n.p,v:n.v}); }));
+  if(!notes.length){ toast('반주 MIDI에 음이 없어요'); return; }
+  pushHistory();
+  if(!MID&&!S.melody.length||$('#sampleTag').hidden===false){
+    if(m.tempo) S.bpm=Math.max(30,Math.min(300,Math.round(60e6/m.tempo)));
+    if(m.ts&&m.ts[0]&&m.ts[1]){ S.num=m.ts[0]; S.den=m.ts[1]; }
+  }
+  ACC={name:file.name,notes};
+  const end=Math.max(...notes.map(n=>n.s+n.d));
+  if(end>totalBeats()) setBars(Math.ceil(end/qpb()-1e-6));
+  detectKey(notes.concat(S.melody)); SCL=null; syncControls();
+  $('#accName').textContent=`반주 MIDI: ${file.name} (${notes.length}음)`; $('#accRow').hidden=false;
+  HIST.pop(); runDetect(true);
+}
 function applyMidi(idx,fresh){
   const g=MID.groups[idx]; pushHistory();
   S.melody=skyline(g.notes); R.sel=null;
-  const accNotes=MID.groups.filter((x,i)=>i!==idx&&!x.drum).flatMap(x=>x.notes);
-  if(fresh) detectKey(accNotes.length?accNotes.concat(S.melody):S.melody);
+  const accN=ACC?ACC.notes:MID.groups.filter((x,i)=>i!==idx&&!x.drum).flatMap(x=>x.notes);
+  if(fresh) detectKey(accN.length?accN.concat(S.melody):S.melody);
   SCL=null;
   const all=MID.groups.filter(x=>!x.drum).flatMap(x=>x.notes);
   const end=Math.max(...all.map(n=>n.s+n.d));
   setBars(Math.ceil(end/qpb()-1e-6)); S.harmOn=Array(S.bars).fill(true); S.playFrom=0;
-  if($('#autoChords').checked){ S.chords=detectChords(accNotes.length&&$('#chordSrc').value==='auto'?accNotes:S.melody,!(accNotes.length&&$('#chordSrc').value==='auto')); }
+  if($('#autoChords').checked){ const ua=accN.length&&$('#chordSrc').value==='auto'; S.chords=detectChords(ua?accN:S.melody,!ua); }
   markReal(); wrap.scrollLeft=0; refreshAll(true);
 }
 $('#midiFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) loadMidi(f); e.target.value=''; });
 $('#trackSel').addEventListener('change',e=>{ if(MID) applyMidi(+e.target.value,false); });
 
-$('#detectBtn').addEventListener('click',()=>{
-  const accNotes=MID?MID.groups.filter(x=>!x.drum&&x.notes!==null).filter((x,i)=>String(MID.groups.indexOf(x))!==$('#trackSel').value).flatMap(x=>x.notes):[];
-  const useAcc=accNotes.length&&$('#chordSrc').value==='auto';
-  if(!useAcc&&!S.melody.length){ toast('멜로디가 있어야 코드를 찾을 수 있어요'); return; }
-  pushHistory(); S.chords=detectChords(useAcc?accNotes:S.melody,!useAcc); markReal(); afterChange(true);
-  toast(useAcc?'반주 트랙으로 코드를 찾았어요':'멜로디로 코드를 추측했어요. 틀린 곳은 고쳐 주세요');
-});
+$('#detectBtn').addEventListener('click',()=>runDetect(false));
+$('#accFile').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) loadAcc(f); e.target.value=''; });
+$('#accClear').addEventListener('click',()=>{ ACC=null; $('#accRow').hidden=true; toast('반주 MIDI를 뺐어요. 코드표는 그대로 남아 있어요'); });
 $('#detectKeyBtn').addEventListener('click',()=>{ if(detectKey(S.melody)){ syncControls(); afterChange(true); toast(`${TONIC_LABEL[S.tonic]} ${S.mode==='major'?'장조':'단조'}로 보여요`); } else toast('멜로디가 없어요'); });
 
 // voice
