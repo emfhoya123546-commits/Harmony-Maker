@@ -120,6 +120,25 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .chip i{width:8px;height:8px;border-radius:2px;background:var(--c);opacity:.35}
 .chip[aria-pressed="true"]{border-color:var(--c);color:var(--ink);font-weight:600;background:var(--sunk)}
 .chip[aria-pressed="true"] i{opacity:1}
+.gamebtn{border-color:var(--mel);color:var(--mel);font-weight:600}
+.gov{position:fixed;inset:0;z-index:60;background:rgba(10,14,22,.55);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.gpanel{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:min(640px,100%);max-height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ghead h2{margin:0;font:700 20px/1.2 var(--f-disp)}
+.gopts{display:flex;flex-direction:column;gap:8px}
+.grow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.gscore{font:500 12.5px var(--f-mono);color:var(--ink2);margin-left:auto}
+.gans{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.gbtn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 8px;border:1.5px solid var(--line);border-radius:9px;background:var(--panel);cursor:pointer;font-size:13.5px;font-weight:600;color:var(--ink)}
+.gbtn:hover{border-color:var(--ink3)}
+.gbtn svg{width:80px;height:28px}
+.gbtn polyline{fill:none;stroke:var(--mel);stroke-width:2;stroke-linejoin:round}
+.gbtn.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,var(--panel))}
+.gbtn.right polyline{stroke:var(--good)}
+.gbtn.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--panel))}
+.gbtn.wrong polyline{stroke:var(--bad)}
+.gfb{margin:0;font-size:13.5px;color:var(--ink2);min-height:3em}
+.gfb.ok{color:var(--good)} .gfb.no{color:var(--bad)}
 .tfold{border-top:1px solid var(--line)}
 .tfold:first-child{border-top:0}
 .tfold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px;font-size:12.5px;font-weight:600;letter-spacing:.04em;color:var(--ink2);user-select:none;border-radius:6px}
@@ -175,6 +194,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 
 <header class="top"><div class="top-in">
   <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button></div>
+  <button class="btn gamebtn" id="gameBtn">신스 파형 맞추기</button>
   <div class="transport">
     <button id="playBtn" class="btn primary play" aria-label="재생">▶ 재생</button>
     <label class="fld"><span>BPM</span><input id="bpm" type="number" min="30" max="300"></label>
@@ -418,6 +438,19 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
     </div>
   </section>
 </main>
+<div class="gov" id="gameOv" hidden>
+  <div class="gpanel" role="dialog" aria-modal="true" aria-labelledby="gTitle">
+    <div class="ghead"><h2 id="gTitle">신스 파형 맞추기</h2><button class="btn ghost sm" id="gClose">닫기</button></div>
+    <div class="gopts">
+      <div class="seg" id="gMode"><button data-v="game" aria-selected="true">게임</button><button data-v="learn" aria-selected="false">연습 듣기</button></div>
+      <div class="seg" id="gLv"><button data-v="1" aria-selected="true">1단계 · 기본 4개</button><button data-v="2" aria-selected="false">2단계 · +펄스</button><button data-v="3" aria-selected="false">3단계 · +슈퍼쏘</button></div>
+      <div class="seg" id="gPitch"><button data-v="fixed" aria-selected="true">음 고정 (A3)</button><button data-v="rand" aria-selected="false">음 랜덤</button></div>
+    </div>
+    <div class="grow"><button class="btn primary" id="gPlay">▶ 문제 듣기</button><button class="btn" id="gNext" hidden>다음 문제</button><span class="gscore" id="gScore"></span></div>
+    <div class="gans" id="gAns"></div>
+    <p class="gfb" id="gFb" aria-live="polite"></p>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -1476,6 +1509,7 @@ $('#newSong').addEventListener('click',()=>{ pushHistory(); S.melody=[]; S.chord
 
 // keyboard
 document.addEventListener('keydown',e=>{
+  if(!$('#gameOv').hidden) return;
   const tag=(e.target.tagName||'').toLowerCase(); if(tag==='input'||tag==='select'||tag==='textarea') return;
   if(e.code==='Space'){ e.preventDefault(); PLAY?stopPlay():startPlay(); }
   else if(e.key==='Delete'||e.key==='Backspace'){ if(R.sel||R.hsel){ e.preventDefault(); delSel(); } }
@@ -2022,6 +2056,93 @@ $('#cpGo').addEventListener('click',()=>{
   pushHistory(); copyBars(a,b,c,opt); markReal(); refreshAll(true);
   toast(`${a}~${b}마디를 ${c}~${c+b-a}마디에 붙였어요`);
 });
+
+// ---------- waveform ear game ----------
+const WF=[
+  {id:'sine',name:'사인파',lv:1,tip:'배음이 하나도 없는 순수한 소리예요. 휘파람이나 소리굽쇠처럼 둥글고 밋밋해요.'},
+  {id:'triangle',name:'삼각파',lv:1,tip:'홀수 배음이 빠르게 줄어들어요. 사인보다 살짝 또렷하고, 플루트나 오카리나 같아요.'},
+  {id:'square',name:'사각파',lv:1,tip:'홀수 배음만 있어요. 속이 빈 듯한 소리로, 클라리넷이나 8비트 게임 소리 같아요.'},
+  {id:'sawtooth',name:'톱니파 (Saw)',lv:1,tip:'모든 배음이 다 있어요. 가장 밝고 거칠어서 브라스나 스트링 신스의 재료로 많이 써요.'},
+  {id:'pulse25',name:'펄스 25%',lv:2,tip:'사각파의 폭을 좁힌 소리예요. 사각파보다 얇고 콧소리가 나요.'},
+  {id:'pulse12',name:'펄스 12.5%',lv:2,tip:'폭을 더 좁혀서 더 얇고 날카로워요. 패미컴 리드 소리 같아요.'},
+  {id:'supersaw',name:'슈퍼쏘',lv:3,tip:'톱니파 여러 개를 음정을 살짝 어긋나게 겹친 소리예요. 넓고 두꺼워서 트랜스나 EDM 리드에 많이 써요.'},
+];
+const G={lv:1,pitch:'fixed',mode:'game',q:0,total:10,ok:0,streak:0,cur:null,midi:57,answered:false,best:{}};
+try{ G.best=JSON.parse(localStorage.getItem('hwaeum:wfbest')||'{}')||{}; }catch(e){}
+const wfShape=(id,x)=>{ x=x-Math.floor(x);
+  if(id==='sine') return Math.sin(2*Math.PI*x);
+  if(id==='triangle') return x<.25?4*x:(x<.75?2-4*x:4*x-4);
+  if(id==='square') return x<.5?1:-1;
+  if(id==='sawtooth'||id==='supersaw') return 1-2*x;
+  if(id==='pulse25') return x<.25?1:-1;
+  if(id==='pulse12') return x<.125?1:-1; return 0; };
+function wfPath(id,w,h){ const pts=[]; const N=160; for(let i=0;i<=N;i++){ const x=i/N*2; let y=wfShape(id,x+(id.startsWith('pulse')||id==='square'?.0001:0)); if(id==='supersaw') y=(wfShape('sawtooth',x)+wfShape('sawtooth',x*1.04+.3)*.6)/1.6; pts.push(`${(i/N*w).toFixed(1)},${(h/2-y*h*.4).toFixed(1)}`); } return pts.join(' '); }
+const PW={};
+function pulseWave(ctx,duty){ const key=duty; if(PW[key]&&PW[key].ctx===ctx) return PW[key].w; const n=64, re=new Float32Array(n), im=new Float32Array(n);
+  for(let k=1;k<n;k++) re[k]=2/(k*Math.PI)*Math.sin(Math.PI*k*duty); const w=ctx.createPeriodicWave(re,im); PW[key]={ctx,w}; return w; }
+let GOUT=null;
+function wfPlay(id,midi,dur){
+  const ctx=ac(); if(GOUT){ try{ GOUT.gain.setTargetAtTime(0,ctx.currentTime,.01); }catch(e){} }
+  const out=ctx.createGain(); out.connect(ctx.destination); GOUT=out;
+  const t=ctx.currentTime+.03, end=t+dur, f=hz(midi);
+  const lvl={sine:.38,triangle:.34,square:.15,sawtooth:.17,pulse25:.17,pulse12:.19,supersaw:.07}[id]||.15;
+  out.gain.setValueAtTime(0,t); out.gain.linearRampToValueAtTime(lvl,t+.02); out.gain.setValueAtTime(lvl,end-.06); out.gain.linearRampToValueAtTime(0,end);
+  const mk=(det)=>{ const o=ctx.createOscillator(); o.frequency.value=f; o.detune.value=det||0;
+    if(id==='pulse25') o.setPeriodicWave(pulseWave(ctx,.25)); else if(id==='pulse12') o.setPeriodicWave(pulseWave(ctx,.125)); else o.type=id==='supersaw'?'sawtooth':id;
+    o.connect(out); o.start(t); o.stop(end+.05); };
+  if(id==='supersaw') [-22,-14,-6,0,6,14,22].forEach(mk); else mk(0);
+}
+function gPool(){ return WF.filter(w=>w.lv<=G.lv); }
+function gBestKey(){ return G.lv+'-'+G.pitch; }
+function gRender(){
+  const box=$('#gAns'); box.innerHTML='';
+  gPool().forEach(w=>{
+    const b=document.createElement('button'); b.type='button'; b.className='gbtn'; b.dataset.id=w.id;
+    b.innerHTML=`<svg viewBox="0 0 80 28" aria-hidden="true"><polyline points="${wfPath(w.id,80,28)}"/></svg><span>${w.name}</span>`;
+    b.addEventListener('click',()=>gClick(w.id,b)); box.appendChild(b);
+  });
+  gStatus();
+}
+function gStatus(){
+  const best=G.best[gBestKey()];
+  $('#gScore').textContent=G.mode==='game'?`${Math.min(G.q,G.total)} / ${G.total}문제 · 맞힘 ${G.ok} · 연속 ${G.streak}${best!=null?` · 최고 ${best}/${G.total}`:''}`:'버튼을 누르면 그 파형을 들려줘요';
+  $('#gPlay').hidden=G.mode!=='game'; $('#gNext').hidden=!(G.mode==='game'&&G.answered);
+}
+function gNew(){
+  if(G.q>=G.total){ gStart(); }
+  const pool=gPool(); let pick; do{ pick=pool[Math.floor(Math.random()*pool.length)].id; }while(pool.length>1&&pick===G.cur&&Math.random()<.6);
+  G.cur=pick; G.answered=false; G.midi=G.pitch==='fixed'?57:40+Math.floor(Math.random()*33);
+  document.querySelectorAll('#gAns .gbtn').forEach(b=>{ b.classList.remove('right','wrong'); });
+  $('#gFb').textContent='듣고 어떤 파형인지 골라 보세요.'; $('#gFb').className='gfb';
+  gStatus(); wfPlay(G.cur,G.midi,1.1);
+}
+function gStart(){ G.q=0; G.ok=0; G.streak=0; G.cur=null; G.answered=false; }
+function gClick(id,btn){
+  if(G.mode==='learn'||G.answered||G.cur==null){ wfPlay(id,G.cur==null||G.mode==='learn'?(G.pitch==='fixed'?57:G.midi):G.midi,.9); if(G.mode==='learn'){ const w=WF.find(x=>x.id===id); $('#gFb').textContent=`${w.name} · ${w.tip}`; $('#gFb').className='gfb'; } return; }
+  G.answered=true; G.q++;
+  const right=id===G.cur, w=WF.find(x=>x.id===G.cur);
+  if(right){ G.ok++; G.streak++; } else G.streak=0;
+  document.querySelectorAll('#gAns .gbtn').forEach(b=>{ if(b.dataset.id===G.cur) b.classList.add('right'); else if(b===btn) b.classList.add('wrong'); });
+  $('#gFb').className='gfb '+(right?'ok':'no');
+  $('#gFb').textContent=(right?'정답! ':`아쉬워요. 정답은 ${w.name}. `)+w.tip+' 이제 버튼을 눌러서 서로 비교해 들어 보세요.';
+  if(G.q>=G.total){ const k=gBestKey(); if(G.best[k]==null||G.ok>G.best[k]){ G.best[k]=G.ok; try{ localStorage.setItem('hwaeum:wfbest',JSON.stringify(G.best)); }catch(e){} }
+    $('#gFb').textContent+=` · 끝! ${G.total}문제 중 ${G.ok}개 맞혔어요.`; $('#gNext').textContent='다시 하기'; }
+  else $('#gNext').textContent='다음 문제';
+  gStatus();
+}
+function gSeg(sel,key,val){ document.querySelectorAll(sel+' button').forEach(x=>x.setAttribute('aria-selected',x.dataset.v===String(val)?'true':'false')); }
+function gOpen(){ $('#gameOv').hidden=false; document.body.style.overflow='hidden'; gStart(); gRender(); $('#gFb').textContent='▶ 문제 듣기를 누르면 시작해요. 연습 탭에서는 파형을 하나씩 들어 볼 수 있어요.'; $('#gFb').className='gfb'; $('#gPlay').textContent='▶ 문제 듣기'; setTimeout(()=>$('#gPlay').focus(),30); }
+function gClose(){ $('#gameOv').hidden=true; document.body.style.overflow=''; if(GOUT){ try{ GOUT.gain.setTargetAtTime(0,ac().currentTime,.01); }catch(e){} } $('#gameBtn').focus(); }
+$('#gameBtn').addEventListener('click',gOpen);
+$('#gClose').addEventListener('click',gClose);
+$('#gameOv').addEventListener('click',e=>{ if(e.target.id==='gameOv') gClose(); });
+document.addEventListener('keydown',e=>{ if(!$('#gameOv').hidden&&e.key==='Escape'){ e.stopPropagation(); gClose(); } },true);
+$('#gPlay').addEventListener('click',()=>{ if(G.cur==null||G.answered) gNew(); else wfPlay(G.cur,G.midi,1.1); $('#gPlay').textContent='↻ 다시 듣기'; });
+$('#gNext').addEventListener('click',()=>{ gNew(); $('#gPlay').textContent='↻ 다시 듣기'; });
+document.querySelectorAll('#gLv button').forEach(b=>b.addEventListener('click',()=>{ G.lv=+b.dataset.v; gSeg('#gLv','lv',G.lv); gStart(); gRender(); $('#gPlay').textContent='▶ 문제 듣기'; $('#gFb').textContent='단계를 바꿨어요. ▶ 문제 듣기로 시작해요.'; $('#gFb').className='gfb'; }));
+document.querySelectorAll('#gPitch button').forEach(b=>b.addEventListener('click',()=>{ G.pitch=b.dataset.v; gSeg('#gPitch','pitch',G.pitch); gStart(); gStatus(); $('#gPlay').textContent='▶ 문제 듣기'; }));
+document.querySelectorAll('#gMode button').forEach(b=>b.addEventListener('click',()=>{ G.mode=b.dataset.v; gSeg('#gMode','mode',G.mode); gStart(); gRender(); document.querySelectorAll('#gAns .gbtn').forEach(x=>x.classList.remove('right','wrong'));
+  $('#gFb').textContent=G.mode==='learn'?'파형 버튼을 눌러서 하나씩 들어 보세요.':'▶ 문제 듣기로 시작해요.'; $('#gFb').className='gfb'; $('#gPlay').textContent='▶ 문제 듣기'; }));
 
 // theme / resize
 window.addEventListener('resize',()=>layout());
