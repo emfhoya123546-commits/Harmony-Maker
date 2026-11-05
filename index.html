@@ -143,6 +143,15 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .gbtn.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--panel))}
 .gbtn.wrong polyline{stroke:var(--bad)}
 .gbody a{color:var(--mel)}
+.hpanel{width:min(680px,100%)}
+.hlead{margin:0;color:var(--ink2);font-size:14px}
+.hflow{margin:0;padding:0;list-style:none;counter-reset:hf;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.hflow li{counter-increment:hf;border:1px solid var(--line);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink2);background:var(--sunk)}
+.hflow li>b{font-size:14px;color:var(--ink);display:flex;align-items:center;gap:6px}
+.hflow li>b::before{content:counter(hf);font:600 11px var(--f-mono);color:var(--mel);border:1.5px solid var(--mel);border-radius:50%;width:20px;height:20px;display:inline-grid;place-items:center;flex:none}
+.hlist{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink2)}
+.hlist b,.hflow span b{color:var(--ink)}
+.hlist code,.hlead code{font:500 12px var(--f-mono);background:var(--sunk);padding:1px 5px;border-radius:4px;color:var(--ink)}
 .gfb{margin:0;font-size:13.5px;color:var(--ink2);min-height:3em}
 .gfb.ok{color:var(--good)} .gfb.no{color:var(--bad)}
 .tfold{border-top:1px solid var(--line)}
@@ -199,7 +208,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 </style>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button></div>
+  <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button><button class="btn ghost sm" id="helpBtn">도움말</button></div>
   <button class="btn gamebtn" id="gameBtn"><svg viewBox="0 0 30 16" aria-hidden="true"><polyline points="1,8 4,2 7,8 10,14 13,8 16,2 16,14 19,14 19,2 22,2 22,14 25,2 29,14"/></svg>신스 파형 맞추기</button>
   <div class="transport">
     <button id="playBtn" class="btn primary play" aria-label="재생">▶ 재생</button>
@@ -458,6 +467,49 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
     </div>
   </section>
 </main>
+<div class="gov" id="helpOv" hidden>
+  <div class="gpanel hpanel" role="dialog" aria-modal="true" aria-labelledby="hTitle">
+    <div class="ghead"><h2 id="hTitle">화음 쌓기 쓰는 법</h2><button class="btn ghost sm" id="hClose">닫기</button></div>
+    <p class="hlead">멜로디를 넣으면 코드에 맞춰 화음을 자동으로 쌓고, MIDI나 악보로 내보내는 도구예요. 처음 열면 예시 곡이 들어 있으니 위의 <b>▶ 재생</b>부터 눌러 보세요.</p>
+    <ol class="hflow">
+      <li><b>멜로디 넣기</b><span>왼쪽 ①에서 방법을 골라요. MIDI 파일, 악보 파일(MusicXML), 노래 녹음, 피아노롤에 직접 그리기 중 하나예요.</span></li>
+      <li><b>코드 확인</b><span>② 코드표에 마디마다 코드를 적거나, 반주 MIDI를 올려 자동으로 찾아요. 칸 하나가 한 박이고, 바뀌는 박에만 적으면 돼요.</span></li>
+      <li><b>화음 고르기</b><span>③에서 넣고 싶은 화음을 켜요. 뮤지컬·합창이면 <b>SATB 합창</b> 탭을 써요.</span></li>
+      <li><b>내보내기</b><span>④에서 MIDI(Cubase용)나 MusicXML(악보 프로그램용)로 저장해요.</span></li>
+    </ol>
+    <details class="guide" open><summary>멜로디 넣는 방법</summary><div class="gbody"><ul class="hlist">
+      <li><b>MIDI</b> · 트랙이 여러 개면 멜로디 트랙을 자동으로 고르고, 나머지 트랙으로 코드를 찾아요. 틀리면 "멜로디 파트"에서 바꿔요.</li>
+      <li><b>악보</b> · Sibelius, MuseScore, Finale에서 내보낸 MusicXML(.musicxml, .mxl)을 읽어요. 코드 기호, 키, 템포도 같이 들어와요. 사진이나 PDF는 안내를 따라 MusicXML로 바꿔서 올려요.</li>
+      <li><b>녹음</b> · 가이드 트랙을 받아 헤드폰으로 들으며 멜로디만 녹음하고 올려요. 인식이 자주 틀리니 피아노롤에서 꼭 고쳐 주세요.</li>
+      <li><b>그리기</b> · 피아노롤 빈 곳을 눌러 음을 찍어요.</li>
+    </ul></div></details>
+    <details class="guide"><summary>코드표 쓰는 법</summary><div class="gbody"><ul class="hlist">
+      <li>빈칸은 앞 코드가 이어진다는 뜻이에요. <code>Am7</code> <code>Fmaj7</code> <code>G7sus4</code> <code>C/E</code>처럼 적고, 소문자로 써도 자동으로 고쳐져요.</li>
+      <li><b>코드 진행 붙여넣기</b> · <code>C G | Am F | Dm7 G7</code>처럼 텍스트로 한 번에 채워요.</li>
+      <li><b>마디 복사</b> · 1절 후렴의 코드와 고친 화음을 2절 후렴에 그대로 붙여요.</li>
+      <li>마지막 마디에서 Enter를 누르면 마디가 하나 늘어나요.</li>
+    </ul></div></details>
+    <details class="guide"><summary>화음 고르기와 고치기</summary><div class="gbody"><ul class="hlist">
+      <li><b>자유 선택</b> · 화음을 여러 개 같이 켤 수 있어요. 각 화음 밑의 "이럴 때"를 참고해요.</li>
+      <li><b>구간별 스타일</b> · 벌스는 아래 화음, 후렴은 위+맨 위처럼 마디 구간마다 다르게 정해요.</li>
+      <li><b>SATB 합창</b> · 멜로디를 소프라노·알토·테너 중 어디에 둘지 고르면 나머지 성부를 만들어요. 음역 밖 음은 빨간 점선으로 보여요.</li>
+      <li><b>화음 음 고치기</b> · 피아노롤에서 화음 음을 위아래로 끌어요. 더블클릭하면 그 음만 빠지고, 고친 음에는 흰 점이 찍혀요.</li>
+      <li>피아노롤 맨 위 줄을 누르면 그 마디의 화음을 켜고 꺼요.</li>
+    </ul></div></details>
+    <details class="guide"><summary>저장, 조옮김, 듣기</summary><div class="gbody"><ul class="hlist">
+      <li><b>자동 저장</b> · 작업은 내 브라우저에 자동으로 저장돼요. 다른 사람과 섞이지 않아요. 브라우저에는 한 곡만 기억하니, 곡을 바꾸기 전에 <b>작업 저장</b>으로 파일을 남겨요.</li>
+      <li><b>작업 저장 / 열기</b> · .json 파일로 저장하고 다시 열어요. 다른 사람에게 보내면 이어서 작업할 수 있어요.</li>
+      <li><b>조옮김</b> · −1 / +1로 멜로디, 코드, 화음을 반음씩 같이 옮겨요.</li>
+      <li><b>소리</b> · 멜로디와 화음 소리를 신스나 코러스(아-/우-)로 따로 골라 들을 수 있어요.</li>
+      <li><b>되돌리기</b> · Ctrl+Z로 거의 모든 작업을 되돌릴 수 있어요. Space는 재생/정지예요.</li>
+    </ul></div></details>
+    <details class="guide"><summary>신스 파형 맞추기</summary><div class="gbody"><ul class="hlist">
+      <li>오른쪽 위 분홍 버튼이에요. 소리를 듣고 사인, 삼각, 사각, 톱니, 펄스, 슈퍼쏘 중 무엇인지 맞혀요.</li>
+      <li><b>연습 듣기</b>에서 하나씩 먼저 들어 보고, 게임에서는 답한 뒤 버튼을 눌러 서로 비교해 보세요.</li>
+    </ul></div></details>
+    <div class="grow"><label class="chk"><input type="checkbox" id="hNoAuto"> 다음부터 처음 열 때 이 안내 안 보기</label><button class="btn primary" id="hDone" style="margin-left:auto">시작하기</button></div>
+  </div>
+</div>
 <div class="gov" id="gameOv" hidden>
   <div class="gpanel" role="dialog" aria-modal="true" aria-labelledby="gTitle">
     <div class="ghead"><h2 id="gTitle">신스 파형 맞추기</h2><button class="btn ghost sm" id="gClose">닫기</button></div>
@@ -1529,7 +1581,7 @@ $('#newSong').addEventListener('click',()=>{ pushHistory(); S.melody=[]; S.chord
 
 // keyboard
 document.addEventListener('keydown',e=>{
-  if(!$('#gameOv').hidden) return;
+  if(!$('#gameOv').hidden||!$('#helpOv').hidden) return;
   const tag=(e.target.tagName||'').toLowerCase(); if(tag==='input'||tag==='select'||tag==='textarea') return;
   if(e.code==='Space'){ e.preventDefault(); PLAY?stopPlay():startPlay(); }
   else if(e.key==='Delete'||e.key==='Backspace'){ if(R.sel||R.hsel){ e.preventDefault(); delSel(); } }
@@ -2164,6 +2216,14 @@ document.querySelectorAll('#gPitch button').forEach(b=>b.addEventListener('click
 document.querySelectorAll('#gMode button').forEach(b=>b.addEventListener('click',()=>{ G.mode=b.dataset.v; gSeg('#gMode','mode',G.mode); gStart(); gRender(); document.querySelectorAll('#gAns .gbtn').forEach(x=>x.classList.remove('right','wrong'));
   $('#gFb').textContent=G.mode==='learn'?'파형 버튼을 눌러서 하나씩 들어 보세요.':'▶ 문제 듣기로 시작해요.'; $('#gFb').className='gfb'; $('#gPlay').textContent='▶ 문제 듣기'; }));
 
+// ---------- help ----------
+function hOpen(){ $('#helpOv').hidden=false; document.body.style.overflow='hidden'; try{ $('#hNoAuto').checked=localStorage.getItem('hwaeum:helpSeen')==='1'; }catch(e){} setTimeout(()=>$('#hDone').focus(),30); }
+function hClose(){ $('#helpOv').hidden=true; document.body.style.overflow=''; try{ localStorage.setItem('hwaeum:helpSeen',$('#hNoAuto').checked?'1':'0'); }catch(e){} $('#helpBtn').focus(); }
+$('#helpBtn').addEventListener('click',hOpen);
+$('#hClose').addEventListener('click',hClose); $('#hDone').addEventListener('click',hClose);
+$('#helpOv').addEventListener('click',e=>{ if(e.target.id==='helpOv') hClose(); });
+document.addEventListener('keydown',e=>{ if(!$('#helpOv').hidden&&e.key==='Escape'){ e.stopPropagation(); hClose(); } },true);
+
 // theme / resize
 window.addEventListener('resize',()=>layout());
 try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>draw()); }catch(e){}
@@ -2180,6 +2240,7 @@ refreshAll(true);
 try{ const raw=localStorage.getItem('hwaeum:auto'); if(raw){ const o=JSON.parse(raw); if(o&&o.real){ loadProject(o); toast('지난번 작업을 불러왔어요'); } } }catch(e){}
 BOOTED=true;
 initSample();
+try{ if(localStorage.getItem('hwaeum:helpSeen')==null){ hOpen(); $('#hNoAuto').checked=true; } }catch(e){}
 try{ const v=localStorage.getItem('view'); if(v==='roll'||v==='chords') setView(v); }catch(e){}
 })();
 </script>
