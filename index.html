@@ -10,7 +10,7 @@
   --paper:#F2F4F7; --panel:#FFFFFF; --sunk:#E9ECF1; --key:#EEF1F5;
   --ink:#151C28; --ink2:#4E596A; --ink3:#8992A0; --line:#D6DBE3; --grid:#E5E9EF;
   --mel:#2343D0; --mel-ink:#FFFFFF; --on:rgba(35,67,208,.10);
-  --h1:#0A8574; --h2:#B06400; --h3:#AF2277; --h4:#4E7A10; --h5:#6A3CD4; --h6:#5B6576; --h7:#0369A1; --h8:#9F1239; --h9:#C2410C; --h10:#78350F; --h11:#15803D; --h12:#9333EA;
+  --h1:#0A8574; --h2:#B06400; --h3:#AF2277; --h4:#4E7A10; --h5:#6A3CD4; --h6:#5B6576; --h7:#0369A1; --h8:#9F1239; --h9:#C2410C; --h10:#78350F; --h11:#15803D; --h12:#9333EA; --game:#D61F69; --game-ink:#FFFFFF;
   --bad:#C0262D; --good:#0A8574;
   --f-disp:"Gowun Batang","Nanum Myeongjo",serif;
   --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
@@ -21,13 +21,13 @@
   --paper:#0E1218; --panel:#151A22; --sunk:#1B212B; --key:#1A2029;
   --ink:#E5E9F0; --ink2:#A3ADBC; --ink3:#6D7787; --line:#2A3241; --grid:#1F2631;
   --mel:#7D96FF; --mel-ink:#0B1020; --on:rgba(125,150,255,.14);
-  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE;
+  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE; --game:#FF5FA2; --game-ink:#1A0610;
   --bad:#FF6B6B; --good:#2CCDB6; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#0E1218; --panel:#151A22; --sunk:#1B212B; --key:#1A2029;
   --ink:#E5E9F0; --ink2:#A3ADBC; --ink3:#6D7787; --line:#2A3241; --grid:#1F2631;
   --mel:#7D96FF; --mel-ink:#0B1020; --on:rgba(125,150,255,.14);
-  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE;
+  --h1:#2CCDB6; --h2:#F0B44A; --h3:#F06AB4; --h4:#A6DB4C; --h5:#B49BFF; --h6:#98A3B5; --h7:#5BB8F0; --h8:#FB7185; --h9:#FF9A5C; --h10:#D6A57A; --h11:#4ADE80; --h12:#D8B4FE; --game:#FF5FA2; --game-ink:#1A0610;
   --bad:#FF6B6B; --good:#2CCDB6; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -120,7 +120,12 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .chip i{width:8px;height:8px;border-radius:2px;background:var(--c);opacity:.35}
 .chip[aria-pressed="true"]{border-color:var(--c);color:var(--ink);font-weight:600;background:var(--sunk)}
 .chip[aria-pressed="true"] i{opacity:1}
-.gamebtn{border-color:var(--mel);color:var(--mel);font-weight:600}
+.gamebtn{background:var(--game);border-color:var(--game);color:var(--game-ink);font-weight:700;font-size:14.5px;padding:8px 16px 8px 12px;gap:8px;border-radius:9px;box-shadow:0 0 0 0 var(--game);animation:gpulse 2.4s ease-out infinite}
+.gamebtn:hover{border-color:var(--game);filter:brightness(1.08)}
+.gamebtn svg{width:30px;height:16px;flex:none}
+.gamebtn polyline{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+@keyframes gpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--game) 55%,transparent)}70%{box-shadow:0 0 0 10px color-mix(in srgb,var(--game) 0%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.gamebtn{animation:none}}
 .gov{position:fixed;inset:0;z-index:60;background:rgba(10,14,22,.55);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .gpanel{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:min(640px,100%);max-height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
 .ghead{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -194,7 +199,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 
 <header class="top"><div class="top-in">
   <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button></div>
-  <button class="btn gamebtn" id="gameBtn">신스 파형 맞추기</button>
+  <button class="btn gamebtn" id="gameBtn"><svg viewBox="0 0 30 16" aria-hidden="true"><polyline points="1,8 4,2 7,8 10,14 13,8 16,2 16,14 19,14 19,2 22,2 22,14 25,2 29,14"/></svg>신스 파형 맞추기</button>
   <div class="transport">
     <button id="playBtn" class="btn primary play" aria-label="재생">▶ 재생</button>
     <label class="fld"><span>BPM</span><input id="bpm" type="number" min="30" max="300"></label>
