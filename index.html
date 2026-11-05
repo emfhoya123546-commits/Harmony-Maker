@@ -145,6 +145,10 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .gbtn.wrong polyline{stroke:var(--bad)}
 .gbody a{color:var(--mel)}
 .hpanel{width:min(680px,100%)}
+.rpanel{width:min(460px,100%)}
+.rtitle{margin:0;font:700 19px/1.3 var(--f-disp)}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:var(--panel);font-weight:600}
+.btn.danger:hover{filter:brightness(1.08);border-color:var(--bad)}
 .htitle{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;min-width:0}
 .hnote{font-size:12.5px;color:var(--ink3)}
 .hnote b{color:var(--mel);font-weight:600}
@@ -226,6 +230,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
     <label class="fld"><span>곡</span><input id="songName" type="text" placeholder="곡 이름" autocomplete="off"></label>
     <button id="saveProj" class="btn ghost">작업 저장</button>
     <button id="openProj" class="btn ghost">작업 열기</button>
+    <button id="resetProj" class="btn ghost">작업 초기화</button>
     <input type="file" id="projFile" accept=".json,application/json" hidden>
     <span class="saved" id="savedNote" aria-live="polite"></span>
   </div>
@@ -471,6 +476,13 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
     </div>
   </section>
 </main>
+<div class="gov" id="resetOv" hidden>
+  <div class="gpanel rpanel" role="alertdialog" aria-modal="true" aria-labelledby="rTitle" aria-describedby="rDesc">
+    <h2 id="rTitle" class="rtitle">정말로 초기화하시겠습니까?</h2>
+    <p id="rDesc" class="hlead">멜로디, 코드, 화음 설정, 구간, 고친 화음, 반주 MIDI가 모두 지워지고 빈 8마디로 돌아가요. 남겨 둘 작업이 있으면 먼저 <b>작업 저장</b>으로 파일을 받아 두세요.</p>
+    <div class="grow"><button class="btn" id="rSave">먼저 작업 저장</button><span style="margin-left:auto"></span><button class="btn" id="rCancel">취소</button><button class="btn danger" id="rGo">초기화하기</button></div>
+  </div>
+</div>
 <div class="gov" id="helpOv" hidden>
   <div class="gpanel hpanel" role="dialog" aria-modal="true" aria-labelledby="hTitle">
     <div class="ghead"><div class="htitle"><h2 id="hTitle">화음 쌓기 쓰는 법</h2><span class="hnote">이 안내는 왼쪽 위 <b>도움말</b> 버튼으로 언제든 다시 볼 수 있어요</span></div><button class="btn ghost sm" id="hClose">닫기</button></div>
@@ -1585,7 +1597,7 @@ $('#newSong').addEventListener('click',()=>{ pushHistory(); S.melody=[]; S.chord
 
 // keyboard
 document.addEventListener('keydown',e=>{
-  if(!$('#gameOv').hidden||!$('#helpOv').hidden) return;
+  if(!$('#gameOv').hidden||!$('#helpOv').hidden||!$('#resetOv').hidden) return;
   const tag=(e.target.tagName||'').toLowerCase(); if(tag==='input'||tag==='select'||tag==='textarea') return;
   if(e.code==='Space'){ e.preventDefault(); PLAY?stopPlay():startPlay(); }
   else if(e.key==='Delete'||e.key==='Backspace'){ if(R.sel||R.hsel){ e.preventDefault(); delSel(); } }
@@ -2227,6 +2239,26 @@ $('#helpBtn').addEventListener('click',hOpen);
 $('#hClose').addEventListener('click',hClose); $('#hDone').addEventListener('click',hClose);
 $('#helpOv').addEventListener('click',e=>{ if(e.target.id==='helpOv') hClose(); });
 document.addEventListener('keydown',e=>{ if(!$('#helpOv').hidden&&e.key==='Escape'){ e.stopPropagation(); hClose(); } },true);
+
+// ---------- reset ----------
+function rOpen(){ $('#resetOv').hidden=false; document.body.style.overflow='hidden'; setTimeout(()=>$('#rCancel').focus(),30); }
+function rClose(){ $('#resetOv').hidden=true; document.body.style.overflow=''; $('#resetProj').focus(); }
+function resetProject(){
+  if(PLAY) stopPlay();
+  pushHistory();
+  S.bpm=92; S.num=4; S.den=4; S.tonic=0; S.mode='major'; SCL=null;
+  S.melody=[]; S.chords=Array(8).fill(''); S.harmOn=Array(8).fill(true); setBars(8);
+  S.types={up:true}; S.sections=[]; S.edits={}; S.skipShort=false; S.satb={mel:'S',rhythm:'follow'}; S.playFrom=0;
+  ACC=null; showAcc(); MID=null; $('#trackRow').hidden=true; R.sel=null; R.hsel=null;
+  $('#songName').value=''; $('#satbMel').value='S'; $('#satbRhythm').value='follow'; $('#skipShort').checked=false;
+  markReal(); buildSections(); setHMode('free'); wrap.scrollLeft=0; refreshAll(true);
+}
+$('#resetProj').addEventListener('click',rOpen);
+$('#rCancel').addEventListener('click',rClose);
+$('#rSave').addEventListener('click',()=>$('#saveProj').click());
+$('#rGo').addEventListener('click',()=>{ resetProject(); $('#resetOv').hidden=true; document.body.style.overflow=''; toast('작업을 초기화했어요. 빈 8마디로 시작해요'); });
+$('#resetOv').addEventListener('click',e=>{ if(e.target.id==='resetOv') rClose(); });
+document.addEventListener('keydown',e=>{ if(!$('#resetOv').hidden&&e.key==='Escape'){ e.stopPropagation(); rClose(); } },true);
 
 // theme / resize
 window.addEventListener('resize',()=>layout());
