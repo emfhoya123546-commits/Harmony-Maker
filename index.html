@@ -142,6 +142,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .gbtn.right polyline{stroke:var(--good)}
 .gbtn.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--panel))}
 .gbtn.wrong polyline{stroke:var(--bad)}
+.gbody a{color:var(--mel)}
 .gfb{margin:0;font-size:13.5px;color:var(--ink2);min-height:3em}
 .gfb.ok{color:var(--good)} .gfb.no{color:var(--bad)}
 .tfold{border-top:1px solid var(--line)}
@@ -258,7 +259,21 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
             </ol>
           </div></details>
         </div>
-        <p class="hint" id="imgOff">악보 사진·캡처 인식은 이 페이지를 claude.ai에서 열었을 때만 돼요.</p>
+        <p class="hint" id="imgOff">악보 사진·캡처를 바로 읽는 기능은 claude.ai에서 열었을 때만 돼요. 여기서는 아래 방법으로 MusicXML로 바꾼 다음 위에 올려 주세요.</p>
+        <details class="guide" id="g-omr"><summary>사진·PDF 악보를 MusicXML로 바꾸는 법</summary><div class="gbody">
+          <p class="sub">Audiveris (무료 · Windows, Mac, Linux)</p>
+          <ol class="ol">
+            <li><a href="https://github.com/Audiveris/audiveris/releases" target="_blank" rel="noopener">Audiveris 다운로드 페이지</a>에서 내 컴퓨터에 맞는 설치 파일을 받아 설치해요.</li>
+            <li>Audiveris에서 악보 사진이나 PDF를 열어요. 스캔처럼 똑바로 찍은 선명한 이미지일수록 잘 읽어요.</li>
+            <li>인식(Transcribe)을 실행하고, 틀린 음이 보이면 화면에서 고쳐요.</li>
+            <li>MusicXML(.mxl)로 내보내기(Export)한 다음, 이 탭의 "악보 파일 올리기"에 올려요.</li>
+          </ol>
+          <p class="sub">설치 없이 하고 싶으면</p>
+          <ol class="ol">
+            <li>MuseScore 웹사이트의 <a href="https://musescore.com/import" target="_blank" rel="noopener">PDF 가져오기</a>로 PDF를 올리면 MusicXML로 받을 수 있어요. 인식 엔진이 오래된 버전이라 정확도는 Audiveris보다 떨어질 수 있어요.</li>
+          </ol>
+          <p class="hint">어떤 방법이든 인식이 완벽하지 않아요. 불러온 다음 피아노롤에서 한 번 훑어보고 고쳐 주세요.</p>
+        </div></details>
       </div>
 
       <div class="pane" data-pane="voice" hidden>
