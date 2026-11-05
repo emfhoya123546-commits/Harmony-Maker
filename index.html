@@ -126,6 +126,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .gamebtn polyline{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
 @keyframes gpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--game) 55%,transparent)}70%{box-shadow:0 0 0 10px color-mix(in srgb,var(--game) 0%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
 @media (prefers-reduced-motion:reduce){.gamebtn{animation:none}}
+.maker{font-size:12.5px;color:var(--ink3);white-space:nowrap}
 .gov{position:fixed;inset:0;z-index:60;background:rgba(10,14,22,.55);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .gpanel{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;width:min(640px,100%);max-height:100%;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 50px -20px rgba(0,0,0,.5)}
 .ghead{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -144,6 +145,9 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 .gbtn.wrong polyline{stroke:var(--bad)}
 .gbody a{color:var(--mel)}
 .hpanel{width:min(680px,100%)}
+.htitle{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;min-width:0}
+.hnote{font-size:12.5px;color:var(--ink3)}
+.hnote b{color:var(--mel);font-weight:600}
 .hlead{margin:0;color:var(--ink2);font-size:14px}
 .hflow{margin:0;padding:0;list-style:none;counter-reset:hf;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
 .hflow li{counter-increment:hf;border:1px solid var(--line);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink2);background:var(--sunk)}
@@ -208,7 +212,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 </style>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button><button class="btn ghost sm" id="helpBtn">도움말</button></div>
+  <div class="brand"><h1>화음 쌓기</h1><span class="tag" id="sampleTag">예시 멜로디와 코드가 들어 있어요</span><button class="btn ghost sm" id="themeBtn" aria-pressed="false">다크 모드</button><button class="btn ghost sm" id="helpBtn">도움말</button><span class="maker">만든이 여주24 윤현수</span></div>
   <button class="btn gamebtn" id="gameBtn"><svg viewBox="0 0 30 16" aria-hidden="true"><polyline points="1,8 4,2 7,8 10,14 13,8 16,2 16,14 19,14 19,2 22,2 22,14 25,2 29,14"/></svg>신스 파형 맞추기</button>
   <div class="transport">
     <button id="playBtn" class="btn primary play" aria-label="재생">▶ 재생</button>
@@ -469,7 +473,7 @@ input[type=number]{width:64px;font-family:var(--f-mono);font-variant-numeric:tab
 </main>
 <div class="gov" id="helpOv" hidden>
   <div class="gpanel hpanel" role="dialog" aria-modal="true" aria-labelledby="hTitle">
-    <div class="ghead"><h2 id="hTitle">화음 쌓기 쓰는 법</h2><button class="btn ghost sm" id="hClose">닫기</button></div>
+    <div class="ghead"><div class="htitle"><h2 id="hTitle">화음 쌓기 쓰는 법</h2><span class="hnote">이 안내는 왼쪽 위 <b>도움말</b> 버튼으로 언제든 다시 볼 수 있어요</span></div><button class="btn ghost sm" id="hClose">닫기</button></div>
     <p class="hlead">멜로디를 넣으면 코드에 맞춰 화음을 자동으로 쌓고, MIDI나 악보로 내보내는 도구예요. 처음 열면 예시 곡이 들어 있으니 위의 <b>▶ 재생</b>부터 눌러 보세요.</p>
     <ol class="hflow">
       <li><b>멜로디 넣기</b><span>왼쪽 ①에서 방법을 골라요. MIDI 파일, 악보 파일(MusicXML), 노래 녹음, 피아노롤에 직접 그리기 중 하나예요.</span></li>
@@ -1052,7 +1056,7 @@ async function saveBlob(filename,blob){
 let AC=null;
 function ac(){ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
 const hz=m=>440*Math.pow(2,(m-69)/12);
-const SND={mel:'synth',harm:'synth'};
+const SND={mel:'synth',harm:'ah'};
 const VN={ah:1.9,oo:.76};
 const VOW={ah:[[730,1,6],[1090,.5,8],[2440,.12,10]],oo:[[330,1,6],[760,.3,8],[2240,.06,10]]};
 function choir(ctx,dest,p,t,d,kind,vow){
